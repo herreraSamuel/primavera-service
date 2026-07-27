@@ -1,0 +1,17 @@
+# Dependencias
+node_modules/
+
+# Archivos de entorno y credenciales (¡CRÍTICO!)
+.env
+.env.*
+!.env.example
+
+# Archivos de compilación
+dist/
+build/
+.next/
+
+# Logs y SO
+*.log
+.DS_Store
+Thumbs.db
