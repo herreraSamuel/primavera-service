@@ -24,4 +24,23 @@ export default class ClientController {
         const newClient = await ClientEntity.create(data);
         res.status(201).json(newClient);
     }
+    public static async update(req: Request, res: Response) {
+        const { id } = req.params as { id: string };
+        const clientData = req.body;
+
+        const updatedClient = await ClientEntity.update(id, clientData);
+        res.json({
+            message: 'Client modified successfully',
+            data: updatedClient
+        });
+    }
+
+    public static async delete(req: Request, res: Response) {
+        const { id } = req.params as { id: string };
+
+        const deletedClient = await ClientEntity.delete(id);
+        res.json({
+            message: 'Client deleted successfully'
+        });
+    }
 }
