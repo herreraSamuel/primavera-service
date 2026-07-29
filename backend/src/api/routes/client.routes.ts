@@ -1,9 +1,10 @@
-import { Router, type Request, type Response } from 'express';
+import { Router } from 'express';
+import ClientController from '../controllers/client.controller.js';
 
-const router = Router();
+const router = Router({ strict: true });
 
-router.get('/', (req: Request, res: Response) => {
-    res.json({ message: 'Clients route is working perfectly!' });
-});
+router.get('/', ClientController.read);
+
+router.post('/', ClientController.create);
 
 export default router; 

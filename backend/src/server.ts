@@ -1,5 +1,7 @@
+import 'dotenv/config';
 import express, { type Application } from 'express';
 import appRouter from './api/routes/index.js';
+import { errorHandler } from './api/middlewares/error.middleware.js';
 
 class Server {
   private app: Application;
@@ -11,6 +13,7 @@ class Server {
 
     this.middlewares();
     this.routes();
+    this.errorHandling();
   }
 
   private middlewares(): void {
@@ -25,9 +28,13 @@ class Server {
     this.app.use('/api', appRouter);
   }
 
+  private errorHandling() {
+    this.app.use(errorHandler);
+  }
+
   public listen(): void {
     this.app.listen(this.port, () => {
-      console.log(`🚀 Backend initialized at http://localhost:${this.port}`);
+      console.log(`Backend initialized at http://localhost:${this.port}`);
     });
   }
 }
