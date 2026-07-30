@@ -26,7 +26,7 @@ model clientes {
   primer_apellido     String         @db.VarChar(100)
   segundo_apellido    String?        @db.VarChar(100)
   nit                 String?        @db.VarChar(20)
-  documento_identidad String?        @db.VarChar(30)
+  documento_identidad String?        @db.VarChar(30)  @unique
   direccion           String?
   telefono            String?        @db.VarChar(20)
   correo_electronico  String?        @db.VarChar(255)
