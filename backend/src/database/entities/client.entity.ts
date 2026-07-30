@@ -1,4 +1,6 @@
 import { prisma } from '../database.js'
+import { Prisma } from '@prisma/client';
+
 
 export default class ClientEntity {
     public static async findAll() {
@@ -10,11 +12,11 @@ export default class ClientEntity {
 
     }
 
-    public static async create(data: any) {
+    public static async create(data: Prisma.clientesCreateInput) {
         return await prisma.clientes.create({ data });
     }
 
-    public static async update(id: string, data: any) {
+    public static async update(id: string, data: Prisma.clientesUpdateInput) {
         return await prisma.clientes.update({
             where: { id: BigInt(id) },
             data
