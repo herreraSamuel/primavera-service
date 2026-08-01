@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import ClientEntity from '../../database/entities/client.entity.js';
-import { NotFound, BadRequest } from '../errors/client.errors.js';
+import { NotFound, BadRequest } from '../errors/app.error.js';
 
 export default class ClientController {
 
@@ -35,7 +35,12 @@ export default class ClientController {
 
     public static async update(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { id } = req.params as { id: string };
+            const { id } = req.params;
+
+            if (!id || typeof id !== 'string') {
+                throw new BadRequest('Invalid or missing ID');
+            }
+
             const clientData = req.body;
 
             const updatedClient = await ClientEntity.update(id, clientData);
@@ -50,7 +55,11 @@ export default class ClientController {
 
     public static async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const { id } = req.params as { id: string };
+            const { id } = req.params;
+
+            if (!id || typeof id !== 'string') {
+                throw new BadRequest('Invalid or missing ID');
+            }
 
             await ClientEntity.delete(id);
             res.json({

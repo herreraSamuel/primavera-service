@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from 'express';
 import { Prisma } from '@prisma/client';
-import { AppError } from '../errors/client.errors.js';
+import { AppError } from '../errors/app.error.js';
 
 export const errorHandler = (
     err: Error,
