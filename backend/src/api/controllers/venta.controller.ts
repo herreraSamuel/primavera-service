@@ -1,16 +1,16 @@
 import type { Request, Response, NextFunction } from 'express';
-import DepartamentoEntity from '../../database/entities/departamento.entity.js';
+import VentaEntity from '../../database/entities/venta.entity.js';
 import { NotFound, BadRequest } from '../errors/app.error.js';
 
-export default class DepartamentoController {
+export default class VentaController {
 
     public static async read(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const departamentos = await DepartamentoEntity.findAll();
+            const ventas = await VentaEntity.findAll();
 
             res.status(200).json({
-                message: 'Departments retrieved successfully',
-                data: departamentos
+                message: 'Sales retrieved successfully',
+                data: ventas
             });
         } catch (error) {
             next(error);
@@ -25,15 +25,15 @@ export default class DepartamentoController {
                 throw new BadRequest('Invalid or missing ID');
             }
 
-            const departamento = await DepartamentoEntity.findById(Number(id));
+            const venta = await VentaEntity.findById(id);
 
-            if (!departamento) {
-                throw new NotFound('Department not found');
+            if (!venta) {
+                throw new NotFound('Sale not found');
             }
 
             res.status(200).json({
-                message: 'Department retrieved successfully',
-                data: departamento
+                message: 'Sale retrieved successfully',
+                data: venta
             });
         } catch (error) {
             next(error);
@@ -44,11 +44,11 @@ export default class DepartamentoController {
         try {
             const data = req.body;
 
-            const newDepartamento = await DepartamentoEntity.create(data);
+            const newVenta = await VentaEntity.create(data);
 
             res.status(201).json({
-                message: 'Department created successfully',
-                data: newDepartamento
+                message: 'Sale created successfully',
+                data: newVenta
             });
         } catch (error) {
             next(error);
@@ -65,11 +65,11 @@ export default class DepartamentoController {
 
             const data = req.body;
 
-            const updatedDepartamento = await DepartamentoEntity.update(Number(id), data);
+            const updatedVenta = await VentaEntity.update(id, data);
 
             res.status(200).json({
-                message: 'Department modified successfully',
-                data: updatedDepartamento
+                message: 'Sale modified successfully',
+                data: updatedVenta
             });
         } catch (error) {
             next(error);
@@ -84,10 +84,10 @@ export default class DepartamentoController {
                 throw new BadRequest('Invalid or missing ID');
             }
 
-            await DepartamentoEntity.delete(Number(id));
+            await VentaEntity.delete(id);
 
             res.status(200).json({
-                message: 'Department deleted successfully'
+                message: 'Sale deleted successfully'
             });
         } catch (error) {
             next(error);
