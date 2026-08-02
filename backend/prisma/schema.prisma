@@ -9,14 +9,9 @@ datasource db {
 model aerolineas {
   id             Int              @id @default(autoincrement())
   nombre         String           @db.VarChar(100)
-  esta_activo    Boolean?         @default(true)
+  created_at     DateTime?        @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime?        @updatedAt @db.Timestamptz(6)
   detalles_venta detalles_venta[]
-}
-
-model categorias_gasto {
-  id          Int           @id @default(autoincrement())
-  nombre      String        @db.VarChar(100)
-  tipos_gasto tipos_gasto[]
 }
 
 model clientes {
@@ -26,43 +21,47 @@ model clientes {
   primer_apellido     String         @db.VarChar(100)
   segundo_apellido    String?        @db.VarChar(100)
   nit                 String?        @db.VarChar(20)
-  documento_identidad String?        @db.VarChar(30)  @unique
+  documento_identidad String?        @db.VarChar(30) @unique
   direccion           String?
   telefono            String?        @db.VarChar(20)
   correo_electronico  String?        @db.VarChar(255)
   departamento_id     Int?
   deleted_at          DateTime?      @db.Timestamptz(6)
   created_at          DateTime?      @default(now()) @db.Timestamptz(6)
-  updated_at          DateTime?      @default(now()) @db.Timestamptz(6)
+  updated_at          DateTime?      @updatedAt @db.Timestamptz(6)
   departamentos       departamentos? @relation(fields: [departamento_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   facturas            facturas[]
   ventas              ventas[]
 }
 
 model departamentos {
-  id       Int        @id @default(autoincrement())
-  nombre   String     @db.VarChar(100)
-  clientes clientes[]
+  id         Int        @id @default(autoincrement())
+  nombre     String     @db.VarChar(100)
+  created_at DateTime?  @default(now()) @db.Timestamptz(6)
+  updated_at DateTime?  @updatedAt @db.Timestamptz(6)
+  clientes   clientes[]
 }
 
 model detalles_venta {
-  id                                            BigInt                  @id @default(autoincrement())
-  venta_id                                      BigInt
-  servicio_id                                   Int?
-  tipo_viaje                                    tipo_viaje_opcion?
-  origen_pais_id                                Int?
-  destino_pais_id                               Int?
-  cantidad_pasajeros                            Int                     @default(1)
-  precio_boletos                                Decimal                 @default(0.00) @db.Decimal(12, 2)
-  proveedor_id                                  Int?
-  aerolinea_id                                  Int?
-  detalles_especificos                          String?
-  aerolineas                                    aerolineas?             @relation(fields: [aerolinea_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  paises_detalles_venta_destino_pais_idTopaises paises?                 @relation("detalles_venta_destino_pais_idTopaises", fields: [destino_pais_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  paises_detalles_venta_origen_pais_idTopaises  paises?                 @relation("detalles_venta_origen_pais_idTopaises", fields: [origen_pais_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  operadores_proveedores                        operadores_proveedores? @relation(fields: [proveedor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  servicios                                     servicios?              @relation(fields: [servicio_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  ventas                                        ventas                  @relation(fields: [venta_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id                   BigInt                  @id @default(autoincrement())
+  venta_id             BigInt
+  servicio_id          Int?
+  tipo_viaje           tipo_viaje_opcion?
+  origen_pais_id       Int?
+  destino_pais_id      Int?
+  cantidad_pasajeros   Int                     @default(1)
+  precio_boletos       Decimal                 @default(0.00) @db.Decimal(12, 2)
+  proveedor_id         Int?
+  aerolinea_id         Int?
+  detalles_especificos String?
+  created_at           DateTime?               @default(now()) @db.Timestamptz(6)
+  updated_at           DateTime?               @updatedAt @db.Timestamptz(6)
+  aerolineas           aerolineas?             @relation(fields: [aerolinea_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  pais_destino         paises?                 @relation("detalles_venta_destino", fields: [destino_pais_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  pais_origen          paises?                 @relation("detalles_venta_origen", fields: [origen_pais_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  operadores_proveedores operadores_proveedores? @relation(fields: [proveedor_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  servicios            servicios?              @relation(fields: [servicio_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  ventas               ventas                  @relation(fields: [venta_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model facturas {
@@ -72,6 +71,7 @@ model facturas {
   fecha_factura DateTime  @default(dbgenerated("CURRENT_DATE")) @db.Date
   total_factura Decimal   @db.Decimal(12, 2)
   created_at    DateTime? @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime? @updatedAt @db.Timestamptz(6)
   clientes      clientes? @relation(fields: [cliente_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   ventas        ventas?   @relation(fields: [venta_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
@@ -82,8 +82,8 @@ model gastos_fijos {
   monto         Decimal          @db.Decimal(12, 2)
   frecuencia    frecuencia_gasto @default(MENSUAL)
   tipo_gasto_id Int?
-  esta_activo   Boolean?         @default(true)
   created_at    DateTime?        @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime?        @updatedAt @db.Timestamptz(6)
   tipos_gasto   tipos_gasto?     @relation(fields: [tipo_gasto_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
@@ -94,38 +94,44 @@ model gastos_variables {
   monto         Decimal      @db.Decimal(12, 2)
   tipo_gasto_id Int?
   created_at    DateTime?    @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime?    @updatedAt @db.Timestamptz(6)
   tipos_gasto   tipos_gasto? @relation(fields: [tipo_gasto_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model operadores_proveedores {
   id             Int              @id @default(autoincrement())
   nombre         String           @db.VarChar(100)
-  esta_activo    Boolean?         @default(true)
+  created_at     DateTime?        @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime?        @updatedAt @db.Timestamptz(6)
   detalles_venta detalles_venta[]
 }
 
 model paises {
-  id                                                    Int              @id @default(autoincrement())
-  iso                                                   String           @db.VarChar(10)
-  nombre                                                String           @db.VarChar(100)
-  detalles_venta_detalles_venta_destino_pais_idTopaises detalles_venta[] @relation("detalles_venta_destino_pais_idTopaises")
-  detalles_venta_detalles_venta_origen_pais_idTopaises  detalles_venta[] @relation("detalles_venta_origen_pais_idTopaises")
+  id                     Int              @id @default(autoincrement())
+  iso                    String           @db.VarChar(10)
+  nombre                 String           @db.VarChar(100)
+  created_at             DateTime?        @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime?        @updatedAt @db.Timestamptz(6)
+  detalles_venta_destino detalles_venta[] @relation("detalles_venta_destino")
+  detalles_venta_origen  detalles_venta[] @relation("detalles_venta_origen")
 }
 
 model servicios {
   id             Int              @id @default(autoincrement())
   nombre         String           @db.VarChar(100)
-  esta_activo    Boolean?         @default(true)
+  created_at     DateTime?        @default(now()) @db.Timestamptz(6)
+  updated_at     DateTime?        @updatedAt @db.Timestamptz(6)
   detalles_venta detalles_venta[]
 }
 
 model tipos_gasto {
-  id                 Int                @id @default(autoincrement())
-  nombre             String             @db.VarChar(100)
-  categoria_gasto_id Int?
-  gastos_fijos       gastos_fijos[]
-  gastos_variables   gastos_variables[]
-  categorias_gasto   categorias_gasto?  @relation(fields: [categoria_gasto_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id               Int                    @id @default(autoincrement())
+  nombre           String                 @db.VarChar(100)
+  categoria_gasto  categoria_gasto_enum?
+  created_at       DateTime?              @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime?              @updatedAt @db.Timestamptz(6)
+  gastos_fijos     gastos_fijos[]
+  gastos_variables gastos_variables[]
 }
 
 model ventas {
@@ -137,18 +143,18 @@ model ventas {
   monto_neto        Decimal          @default(0.00) @db.Decimal(12, 2)
   comision_operador Decimal?         @default(0.00) @db.Decimal(12, 2)
   metodo_pago       tipo_metodo_pago @default(EFECTIVO)
-  estado            estado_venta     @default(COMPLETADA)
+  deleted_at        DateTime?        @db.Timestamptz(6)
   created_at        DateTime?        @default(now()) @db.Timestamptz(6)
-  updated_at        DateTime?        @default(now()) @db.Timestamptz(6)
+  updated_at        DateTime?        @updatedAt @db.Timestamptz(6)
   detalles_venta    detalles_venta[]
   facturas          facturas[]
   clientes          clientes         @relation(fields: [cliente_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-enum estado_venta {
-  COMPLETADA
-  PENDIENTE
-  ANULADA
+enum categoria_gasto_enum {
+  FIJO
+  VARIABLE
+  AMBOS
 }
 
 enum frecuencia_gasto {

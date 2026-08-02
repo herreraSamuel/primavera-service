@@ -29,11 +29,6 @@ export const createVentaSchema = z.object({
     metodo_pago: z
         .enum(['EFECTIVO', 'TARJETA'] as const, { message: 'Payment method must be EFECTIVO or TARJETA' })
         .optional()
-        .nullable(),
-
-    estado: z
-        .enum(['COMPLETADA', 'PENDIENTE', 'ANULADA'] as const, { message: 'Status must be COMPLETADA, PENDIENTE, or ANULADA' })
-        .optional()
         .nullable()
 }).strict();
 
