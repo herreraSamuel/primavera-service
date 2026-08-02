@@ -4,6 +4,9 @@ import { Prisma } from '@prisma/client';
 export default class VentaEntity {
     public static async findAll() {
         return await prisma.ventas.findMany({
+            where: {
+                deleted_at: null
+            },
             orderBy: { created_at: 'desc' }
         });
     }
@@ -26,8 +29,11 @@ export default class VentaEntity {
     }
 
     public static async delete(id: string) {
-        return await prisma.ventas.delete({
-            where: { id: BigInt(id) }
+        return await prisma.ventas.update({
+            where: { id: BigInt(id) },
+            data: {
+                deleted_at: new Date()
+            }
         });
     }
 }
