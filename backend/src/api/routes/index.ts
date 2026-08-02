@@ -6,6 +6,7 @@ import detalleVentaRoutes from './detalle-venta.routes.js';
 import serviciosRoutes from './servicios.routes.js';
 import paisesRoutes from './paises.routes.js';
 import operadoresRoutes from './operadores.routes.js';
+import aerolineasRoutes from './aerolineas.routes.js';
 
 const appRouter = Router();
 
@@ -16,5 +17,6 @@ appRouter.use('/detalles-venta', detalleVentaRoutes);
 appRouter.use('/servicios', serviciosRoutes);
 appRouter.use('/paises', paisesRoutes);
 appRouter.use('/operadores', operadoresRoutes);
+appRouter.use('/aerolineas', aerolineasRoutes);
 
 export default appRouter;
