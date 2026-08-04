@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import express, { type Application } from 'express';
+import cors from 'cors';
 import appRouter from './api/routes/index.js';
 import { errorHandler } from './api/middlewares/error.middleware.js';
 
@@ -17,6 +18,7 @@ class Server {
   }
 
   private middlewares(): void {
+    this.app.use(cors());
     this.app.use(express.json({ limit: '10mb' }));
 
     (BigInt.prototype as any).toJSON = function () {
