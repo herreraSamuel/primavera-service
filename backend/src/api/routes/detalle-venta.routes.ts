@@ -5,6 +5,7 @@ import { createDetalleVentaSchema, updateDetalleVentaSchema } from '../schemas/d
 
 const router = Router({ strict: true });
 
+router.get('/', DetalleVentaController.read);
 router.get('/venta/:ventaId', DetalleVentaController.readByVentaId);
 router.get('/:id', DetalleVentaController.readById);
 router.post('/', validateBody(createDetalleVentaSchema), DetalleVentaController.create);

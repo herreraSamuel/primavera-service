@@ -2,6 +2,12 @@ import { prisma } from '../database.js';
 import { Prisma } from '@prisma/client';
 
 export default class DetalleVentaEntity {
+    public static async findAll() {
+        return await prisma.detalles_venta.findMany({
+            orderBy: { created_at: 'desc' }
+        });
+    }
+
     public static async findByVentaId(ventaId: string) {
         return await prisma.detalles_venta.findMany({
             where: { venta_id: BigInt(ventaId) }

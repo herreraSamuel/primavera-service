@@ -4,6 +4,19 @@ import { NotFound, BadRequest } from '../errors/app.error.js';
 
 export default class DetalleVentaController {
 
+    public static async read(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const detalles = await DetalleVentaEntity.findAll();
+
+            res.status(200).json({
+                message: 'Sale details retrieved successfully',
+                data: detalles
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
     public static async readByVentaId(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { ventaId } = req.params;
