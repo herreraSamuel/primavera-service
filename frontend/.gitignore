@@ -10,7 +10,7 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
+# testing   ARREGLAR PORQUE SE SUBIO TODO LOS NODE MODULESS XDDD CON EL GIT IGNORE EN RAIZ 
 /coverage
 
 # next.js
