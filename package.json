@@ -1,0 +1,9 @@
+{
+    "name": "viajesprimaveraxela",
+    "private": true,
+    "workspaces": [
+        "backend",
+        "frontend",
+        "shared"
+    ]
+}
