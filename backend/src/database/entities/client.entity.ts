@@ -9,8 +9,17 @@ export default class ClientEntity {
                 deleted_at: null
             }
         });
-
     }
+
+    public static async findById(id: string) {
+        return await prisma.clientes.findFirst({
+            where: {
+                id: BigInt(id),
+                deleted_at: null
+            }
+        });
+    }
+
 
     public static async create(data: Prisma.clientesCreateInput) {
         return await prisma.clientes.create({ data });

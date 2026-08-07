@@ -8,11 +8,33 @@ export default class ClientController {
         try {
             const clients = await ClientEntity.findAll();
 
-            if (!clients || clients.length === 0) {
-                throw new NotFound("No clients found");
+            res.status(200).json({
+                message: 'Clients retrieved successfully',
+                data: clients
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    public static async readById(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { id } = req.params;
+
+            if (!id || typeof id !== 'string') {
+                throw new BadRequest('Invalid or missing ID');
             }
 
-            res.status(200).json(clients);
+            const client = await ClientEntity.findById(id);
+
+            if (!client) {
+                throw new NotFound("Client not found");
+            }
+
+            res.status(200).json({
+                message: 'Client retrieved successfully',
+                data: client
+            });
         } catch (error) {
             next(error);
         }
@@ -27,7 +49,10 @@ export default class ClientController {
             }
 
             const newClient = await ClientEntity.create(data);
-            res.status(201).json(newClient);
+            res.status(201).json({
+                message: 'Client created successfully',
+                data: newClient
+            });
         } catch (error) {
             next(error);
         }
