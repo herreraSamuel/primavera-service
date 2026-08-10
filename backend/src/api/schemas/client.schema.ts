@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
 export const createClientSchema = z.object({
-    // Required fields
     primer_nombre: z
         .string({ message: 'First name is required' })
         .min(1, 'First name cannot be empty')
@@ -12,7 +11,6 @@ export const createClientSchema = z.object({
         .min(1, 'Last name cannot be empty')
         .max(100, 'Last name must be at most 100 characters'),
 
-    // Optional fields (nullable in Prisma)
     segundo_nombre: z
         .string()
         .max(100, 'Second name must be at most 100 characters')
