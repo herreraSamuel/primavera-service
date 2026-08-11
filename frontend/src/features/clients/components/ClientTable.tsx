@@ -5,12 +5,14 @@ import { Edit, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
 import { ClientFormModal } from "./ClientFormModal";
+import { ClientDetailsModal } from "./ClientDetailsModal";
 import type { Client } from "@agency/shared";
 
 export default function ClientTable() {
     const { clientsQuery, deleteClient } = useClients();
     const [deletingClientId, setDeletingClientId] = useState<string | number | null>(null);
     const [editingClient, setEditingClient] = useState<Client | null>(null);
+    const [viewingClient, setViewingClient] = useState<Client | null>(null);
 
     if (clientsQuery.isLoading) {
         return <div className="p-8 text-center text-slate-500 animate-pulse">Cargando clientes...</div>;
@@ -50,7 +52,7 @@ export default function ClientTable() {
                             <th className="px-6 py-4 font-semibold">Doc. Identidad</th>
                             <th className="px-6 py-4 font-semibold">Correo</th>
                             <th className="px-6 py-4 font-semibold">Teléfono</th>
-                            <th className="px-6 py-4 font-semibold">Departamento</th>
+                            <th className="px-6 py-4 font-semibold">Dirección</th>
                             <th className="px-6 py-4 font-semibold text-right">Acciones</th>
                         </tr>
                     </thead>
@@ -63,7 +65,11 @@ export default function ClientTable() {
                             </tr>
                         ) : (
                             clients.map((client) => (
-                                <tr key={client.id} className="hover:bg-slate-50/50 transition-colors group">
+                                <tr 
+                                    key={client.id} 
+                                    onClick={() => setViewingClient(client)}
+                                    className="hover:bg-slate-50/50 transition-colors group cursor-pointer"
+                                >
                                     <td className="px-6 py-5 font-semibold text-slate-800">
                                         {client.primer_nombre} {client.segundo_nombre || ''} {client.primer_apellido} {client.segundo_apellido || ''}
                                     </td>
@@ -72,7 +78,7 @@ export default function ClientTable() {
                                     </td>
                                     <td className="px-6 py-5">
                                         {client.correo_electronico ? (
-                                            <a href={`mailto:${client.correo_electronico}`} className="text-[#0367A6] hover:underline">
+                                            <a href={`mailto:${client.correo_electronico}`} className="text-[#0367A6] hover:underline" onClick={(e) => e.stopPropagation()}>
                                                 {client.correo_electronico}
                                             </a>
                                         ) : "—"}
@@ -80,19 +86,25 @@ export default function ClientTable() {
                                     <td className="px-6 py-5 text-slate-500">
                                         {client.telefono || "—"}
                                     </td>
-                                    <td className="px-6 py-5 text-slate-600">
-                                        {client.departamento_id ? `Departamento ${client.departamento_id}` : "—"}
+                                    <td className="px-6 py-5 text-slate-600 truncate max-w-[200px]">
+                                        {client.direccion || "—"}
                                     </td>
-                                    <td className="px-6 py-5 flex justify-end gap-2 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                                    <td className="px-6 py-5 flex justify-end gap-2">
                                         <button 
-                                            onClick={() => setEditingClient(client)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setEditingClient(client);
+                                            }}
                                             className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-md transition-colors"
                                             title="Editar cliente"
                                         >
                                             <Edit className="w-4 h-4" />
                                         </button>
                                         <button
-                                            onClick={() => setDeletingClientId(client.id)}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                setDeletingClientId(client.id);
+                                            }}
                                             className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md transition-colors"
                                             title="Eliminar cliente"
                                         >
@@ -124,6 +136,13 @@ export default function ClientTable() {
                 isOpen={!!editingClient}
                 onClose={() => setEditingClient(null)}
                 clientToEdit={editingClient}
+            />
+
+            <ClientDetailsModal 
+                isOpen={!!viewingClient}
+                onClose={() => setViewingClient(null)}
+                client={viewingClient}
+                onEdit={(client) => setEditingClient(client)}
             />
         </div>
     );
