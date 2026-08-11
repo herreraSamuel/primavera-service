@@ -1,9 +1,9 @@
 "use client";
 
-import ClientTable from "@/features/clients/components/ClientTable";
+import ClientTable from "@/modules/clients/ClientTable";
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import { ClientFormModal } from "@/features/clients/components/ClientFormModal";
+import { ClientFormModal } from "@/modules/clients/ClientFormModal";
 import { PageHeader } from "@/components/ui/PageHeader";
 
 export default function ClientesPage() {

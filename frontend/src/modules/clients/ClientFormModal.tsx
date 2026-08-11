@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { FormInput } from "@/components/ui/FormInput";
-import { useClients } from "../hooks/useClients";
+import { useClients } from "./useClients";
 import { ApiError } from "@/lib/api";
 import { clientSchema, type Client, type CreateClientDTO, type ClientFormValues } from "@agency/shared";
 

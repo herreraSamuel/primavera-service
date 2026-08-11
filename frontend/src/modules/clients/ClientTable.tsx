@@ -1,6 +1,6 @@
 "use client";
 
-import { useClients } from "../hooks/useClients";
+import { useClients } from "./useClients";
 import { Edit, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
