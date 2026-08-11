@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { clientsService } from "../../services/client.service";
+import { departamentoService } from "../../services/departamento.service";
 import type { CreateClientDTO } from "@agency/shared";
 
 
@@ -17,6 +18,11 @@ export const useClients = () => {
             queryFn: () => clientsService.getById(id),
             enabled: !!id,
         });
+
+    const departamentosQuery = useQuery({
+        queryKey: ["departamentos"],
+        queryFn: departamentoService.getAll,
+    });
 
     const createClient = useMutation({
         mutationFn: clientsService.create,
@@ -48,6 +54,7 @@ export const useClients = () => {
     return {
         clientsQuery,
         clientQuery,
+        departamentosQuery,
         createClient,
         updateClient,
         deleteClient,

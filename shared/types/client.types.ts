@@ -10,6 +10,7 @@ export interface Client {
   telefono: string | null;
   correo_electronico: string | null;
   departamento_id: number | null;
+  departamento?: { id: number; nombre: string } | null;
   deleted_at: Date | string | null;
   created_at: Date | string | null;
   updated_at: Date | string | null;

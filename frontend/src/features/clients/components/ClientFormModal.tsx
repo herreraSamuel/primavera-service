@@ -23,7 +23,7 @@ interface ClientFormModalProps {
 }
 
 export function ClientFormModal({ isOpen, onClose, clientToEdit }: ClientFormModalProps) {
-    const { createClient, updateClient } = useClients();
+    const { createClient, updateClient, departamentosQuery } = useClients();
 
     const {
         register,
@@ -289,14 +289,24 @@ export function ClientFormModal({ isOpen, onClose, clientToEdit }: ClientFormMod
 
                     <div className="space-y-2">
                         <Label htmlFor="departamento_id" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Departamento</Label>
-                        <Input
+                        <select
                             id="departamento_id"
-                            type="number"
                             {...register("departamento_id")}
                             aria-invalid={!!errors.departamento_id}
-                            disabled={isPending}
-                            className="bg-white h-11 rounded-xl border-slate-200 focus-visible:ring-primary/20 shadow-sm"
-                        />
+                            disabled={isPending || departamentosQuery.isLoading}
+                            className="bg-white h-11 rounded-xl border border-slate-200 px-3 w-full outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-slate-700 text-sm shadow-sm transition-all"
+                        >
+                            <option value="">Selecciona un departamento</option>
+                            {departamentosQuery.isLoading ? (
+                                <option value="" disabled>Cargando departamentos...</option>
+                            ) : (
+                                departamentosQuery.data?.map((dept) => (
+                                    <option key={dept.id} value={dept.id}>
+                                        {dept.nombre}
+                                    </option>
+                                ))
+                            )}
+                        </select>
                         {errors.departamento_id && (
                             <p className="text-[11px] font-medium text-destructive">{errors.departamento_id.message}</p>
                         )}

@@ -22,6 +22,8 @@ export function ClientDetailsModal({
 }: ClientDetailsModalProps) {
     if (!client) return null;
 
+    const departamentoNombre = client.departamento?.nombre || "—";
+
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
             <DialogContent className="sm:max-w-[700px] p-8 sm:rounded-2xl border-0 shadow-2xl" showCloseButton={false}>
@@ -75,7 +77,7 @@ export function ClientDetailsModal({
                     </div>
                     <div>
                         <h4 className="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Departamento</h4>
-                        <p className="text-[15px] font-medium text-slate-800">{client.departamento_id ? `Departamento ${client.departamento_id}` : "—"}</p>
+                        <p className="text-[15px] font-medium text-slate-800">{departamentoNombre}</p>
                     </div>
                 </div>
 

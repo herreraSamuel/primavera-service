@@ -29,7 +29,7 @@ model clientes {
   deleted_at          DateTime?      @db.Timestamptz(6)
   created_at          DateTime?      @default(now()) @db.Timestamptz(6)
   updated_at          DateTime?      @updatedAt @db.Timestamptz(6)
-  departamentos       departamentos? @relation(fields: [departamento_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  departamento        departamentos? @relation(fields: [departamento_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   facturas            facturas[]
   ventas              ventas[]
 }

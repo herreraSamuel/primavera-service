@@ -7,6 +7,9 @@ export default class ClientEntity {
         return await prisma.clientes.findMany({
             where: {
                 deleted_at: null
+            },
+            include: {
+                departamento: true
             }
         });
     }
@@ -16,6 +19,9 @@ export default class ClientEntity {
             where: {
                 id: BigInt(id),
                 deleted_at: null
+            },
+            include: {
+                departamento: true
             }
         });
     }
