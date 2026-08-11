@@ -16,8 +16,8 @@ export default function Sidebar() {
     const pathname = usePathname();
 
     return (
-        <aside className="w-64 bg-sidebar text-sidebar-foreground flex flex-col min-h-screen border-r border-sidebar-border shadow-lg">
-            <div className="p-4 border-b border-sidebar-border/60 flex flex-col items-center justify-center">
+        <aside className="w-64 bg-sidebar text-sidebar-foreground flex flex-col h-screen border-r border-sidebar-border shadow-lg">
+            <div className="p-4 border-b border-sidebar-border/60 flex flex-col items-center justify-center shrink-0">
                 <div className="relative w-full h-32">
                     <Image
                         src="/Logo 21 años Xela.png"
@@ -30,7 +30,7 @@ export default function Sidebar() {
                 </div>
             </div>
 
-            <nav className="flex-1 p-4 space-y-2 mt-4">
+            <nav className="flex-1 p-4 space-y-2 mt-4 overflow-y-auto">
                 {navigationItems.map((item) => {
                     const Icon = item.icon;
                     const isActive = pathname === item.href;
@@ -54,7 +54,7 @@ export default function Sidebar() {
                 })}
             </nav>
 
-            <div className="p-4 border-t border-sidebar-border/60">
+            <div className="p-4 border-t border-sidebar-border/60 shrink-0">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-[#0367A6] text-white font-bold flex items-center justify-center text-sm shadow-sm">
                         SH
