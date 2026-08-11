@@ -7,10 +7,25 @@ export default class ClientEntity {
         return await prisma.clientes.findMany({
             where: {
                 deleted_at: null
+            },
+            include: {
+                departamento: true
             }
         });
-
     }
+
+    public static async findById(id: string) {
+        return await prisma.clientes.findFirst({
+            where: {
+                id: BigInt(id),
+                deleted_at: null
+            },
+            include: {
+                departamento: true
+            }
+        });
+    }
+
 
     public static async create(data: Prisma.clientesCreateInput) {
         return await prisma.clientes.create({ data });

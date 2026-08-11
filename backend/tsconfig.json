@@ -37,5 +37,15 @@
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
     "skipLibCheck": true,
-  }
+    "paths": {
+      "@agency/shared": ["../shared/index.node.js"],
+      "@agency/shared/*": ["../shared/*"]
+    }
+  },
+  "include": [
+    "src/**/*.ts",
+    "../shared/types/**/*.ts",
+    "../shared/schemas/**/*.ts",
+    "../shared/index.node.ts"
+  ]
 }
