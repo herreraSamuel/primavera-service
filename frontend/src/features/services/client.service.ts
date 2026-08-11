@@ -1,5 +1,5 @@
 import { api } from "@/lib/api";
-import type { Client, CreateClientDTO } from "@agency/shared";
+import type { Client, CreateClientDTO, PaginatedResponse } from "@agency/shared";
 
 interface ApiResponse<T> {
     message: string;
@@ -7,9 +7,9 @@ interface ApiResponse<T> {
 }
 
 export const clientsService = {
-    getAll: async (): Promise<Client[]> => {
-        const { data } = await api.get<ApiResponse<Client[]>>("/clients");
-        return data.data;
+    getAll: async (page: number = 1, limit: number = 10): Promise<PaginatedResponse<Client>> => {
+        const { data } = await api.get<PaginatedResponse<Client>>(`/clients?page=${page}&limit=${limit}`);
+        return data;
     },
 
     getById: async (id: number | string): Promise<Client> => {

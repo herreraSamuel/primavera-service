@@ -7,9 +7,12 @@ import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
 import { ClientFormModal } from "./ClientFormModal";
 import { ClientDetailsModal } from "./ClientDetailsModal";
 import type { Client } from "@agency/shared";
+import { TablePagination } from "@/components/ui/TablePagination";
 
 export default function ClientTable() {
-    const { clientsQuery, deleteClient } = useClients();
+    const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(10);
+    const { clientsQuery, deleteClient } = useClients(page, limit);
     const [deletingClientId, setDeletingClientId] = useState<string | number | null>(null);
     const [editingClient, setEditingClient] = useState<Client | null>(null);
     const [viewingClient, setViewingClient] = useState<Client | null>(null);
@@ -26,7 +29,8 @@ export default function ClientTable() {
         );
     }
 
-    const clients = clientsQuery.data || [];
+    const clients = clientsQuery.data?.data || [];
+    const meta = clientsQuery.data?.meta;
     const clientToDelete = clients.find(c => c.id === deletingClientId);
 
     return (
@@ -117,6 +121,20 @@ export default function ClientTable() {
                     </tbody>
                 </table>
             </div>
+
+            {meta && (
+                <TablePagination 
+                    page={meta.page}
+                    limit={meta.limit}
+                    total={meta.total}
+                    totalPages={meta.totalPages}
+                    onPageChange={setPage}
+                    onLimitChange={(newLimit) => {
+                        setLimit(newLimit);
+                        setPage(1);
+                    }}
+                />
+            )}
 
             {clientToDelete && (
                 <ConfirmDeleteModal
