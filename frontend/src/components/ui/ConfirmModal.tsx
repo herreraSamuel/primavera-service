@@ -7,36 +7,40 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Loader2Icon, Trash2 } from "lucide-react";
 
-interface ConfirmDeleteModalProps {
+interface ConfirmModalProps {
     isOpen: boolean;
     onClose: () => void;
     onConfirm: () => void;
+    title: string;
+    description: string;
+    confirmText: string;
     isPending: boolean;
-    clientName: string;
 }
 
-export function ConfirmDeleteModal({
+export function ConfirmModal({
     isOpen,
     onClose,
     onConfirm,
+    title,
+    description,
+    confirmText,
     isPending,
-    clientName,
-}: ConfirmDeleteModalProps) {
+}: ConfirmModalProps) {
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && !isPending && onClose()}>
             <DialogContent className="sm:max-w-[420px] p-8 sm:rounded-3xl border-0 shadow-2xl flex flex-col items-center text-center" showCloseButton={false}>
-                <div className="w-14 h-14 bg-red-50 text-red-500 rounded-full flex items-center justify-center mb-2">
+                <div className="w-14 h-14 bg-red-50 text-[#FF6347] rounded-full flex items-center justify-center mb-2">
                     <Trash2 className="w-6 h-6 stroke-[2]" />
                 </div>
                 
                 <DialogHeader className="flex flex-col items-center">
                     <DialogTitle className="text-xl font-bold text-slate-900 mb-1">
-                        ¿Estás seguro?
+                        {title}
                     </DialogTitle>
                     <DialogDescription className="text-[15px] text-slate-500 flex flex-col gap-1 items-center">
-                        <span>¿Deseas eliminar a <span className="font-semibold text-slate-900">{clientName}</span>?</span>
+                        <span>{description}</span>
                         <span>Esta acción no se puede revertir.</span>
                     </DialogDescription>
                 </DialogHeader>
@@ -53,12 +57,12 @@ export function ConfirmDeleteModal({
                     </Button>
                     <Button 
                         type="button"
-                        variant="destructive" 
                         onClick={onConfirm} 
                         disabled={isPending}
-                        className="h-12 rounded-xl font-semibold bg-[#FA4A4A] hover:bg-[#FA4A4A]/90 text-white shadow-sm"
+                        className="h-12 rounded-xl font-semibold bg-[#FF6347] hover:bg-[#FF6347]/90 text-white shadow-sm"
                     >
-                        {isPending ? "Eliminando..." : "Eliminar"}
+                        {isPending && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
+                        {isPending ? "Procesando..." : confirmText}
                     </Button>
                 </DialogFooter>
             </DialogContent>
