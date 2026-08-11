@@ -138,9 +138,11 @@ export function ClientFormModal({ isOpen, onClose, clientToEdit }: ClientFormMod
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && !isPending && onClose()}>
-            <DialogContent className="sm:max-w-[600px]">
-                <DialogHeader>
-                    <DialogTitle>{clientToEdit ? "Editar Cliente" : "Nuevo Cliente"}</DialogTitle>
+            <DialogContent className="sm:max-w-[700px] p-8 sm:rounded-2xl border-0 shadow-2xl" showCloseButton={false}>
+                <DialogHeader className="mb-2">
+                    <DialogTitle className="text-xl font-bold text-slate-900">
+                        {clientToEdit ? "Editar Cliente" : "Nuevo Cliente"}
+                    </DialogTitle>
                 </DialogHeader>
 
                 {mutationError && (
@@ -153,153 +155,172 @@ export function ClientFormModal({ isOpen, onClose, clientToEdit }: ClientFormMod
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-2">
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1.5">
-                            <Label htmlFor="primer_nombre">Primer Nombre *</Label>
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div className="space-y-2">
+                            <Label htmlFor="primer_nombre" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Primer Nombre <span className="text-red-500">*</span></Label>
                             <Input
                                 id="primer_nombre"
                                 {...register("primer_nombre")}
                                 aria-invalid={!!errors.primer_nombre}
                                 disabled={isPending}
+                                className="bg-white h-11 rounded-xl border-slate-200 focus-visible:ring-primary/20 shadow-sm"
                             />
                             {errors.primer_nombre && (
-                                <p className="text-xs font-medium text-destructive">
-                                    {errors.primer_nombre.message}
-                                </p>
+                                <p className="text-[11px] font-medium text-destructive">{errors.primer_nombre.message}</p>
                             )}
                         </div>
-                        <div className="space-y-1.5">
-                            <Label htmlFor="segundo_nombre">Segundo Nombre</Label>
+                        <div className="space-y-2">
+                            <Label htmlFor="segundo_nombre" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Segundo Nombre</Label>
                             <Input
                                 id="segundo_nombre"
                                 {...register("segundo_nombre")}
                                 aria-invalid={!!errors.segundo_nombre}
                                 disabled={isPending}
+                                className="bg-white h-11 rounded-xl border-slate-200 focus-visible:ring-primary/20 shadow-sm"
                             />
                             {errors.segundo_nombre && (
-                                <p className="text-xs font-medium text-destructive">
-                                    {errors.segundo_nombre.message}
-                                </p>
+                                <p className="text-[11px] font-medium text-destructive">{errors.segundo_nombre.message}</p>
                             )}
                         </div>
-                        <div className="space-y-1.5">
-                            <Label htmlFor="primer_apellido">Primer Apellido *</Label>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div className="space-y-2">
+                            <Label htmlFor="primer_apellido" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Primer Apellido <span className="text-red-500">*</span></Label>
                             <Input
                                 id="primer_apellido"
                                 {...register("primer_apellido")}
                                 aria-invalid={!!errors.primer_apellido}
                                 disabled={isPending}
+                                className="bg-white h-11 rounded-xl border-slate-200 focus-visible:ring-primary/20 shadow-sm"
                             />
                             {errors.primer_apellido && (
-                                <p className="text-xs font-medium text-destructive">
-                                    {errors.primer_apellido.message}
-                                </p>
+                                <p className="text-[11px] font-medium text-destructive">{errors.primer_apellido.message}</p>
                             )}
                         </div>
-                        <div className="space-y-1.5">
-                            <Label htmlFor="segundo_apellido">Segundo Apellido</Label>
+                        <div className="space-y-2">
+                            <Label htmlFor="segundo_apellido" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Segundo Apellido</Label>
                             <Input
                                 id="segundo_apellido"
                                 {...register("segundo_apellido")}
                                 aria-invalid={!!errors.segundo_apellido}
                                 disabled={isPending}
+                                className="bg-white h-11 rounded-xl border-slate-200 focus-visible:ring-primary/20 shadow-sm"
                             />
                             {errors.segundo_apellido && (
-                                <p className="text-xs font-medium text-destructive">
-                                    {errors.segundo_apellido.message}
-                                </p>
+                                <p className="text-[11px] font-medium text-destructive">{errors.segundo_apellido.message}</p>
                             )}
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1.5">
-                            <Label htmlFor="documento_identidad">Documento de Identidad (DPI/Pasaporte)</Label>
-                            <Input
-                                id="documento_identidad"
-                                {...register("documento_identidad")}
-                                aria-invalid={!!errors.documento_identidad}
-                                disabled={isPending}
-                            />
-                            {errors.documento_identidad && (
-                                <p className="text-xs font-medium text-destructive">
-                                    {errors.documento_identidad.message}
-                                </p>
-                            )}
-                        </div>
-                        <div className="space-y-1.5">
-                            <Label htmlFor="nit">NIT</Label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div className="space-y-2">
+                            <Label htmlFor="nit" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">NIT</Label>
                             <Input
                                 id="nit"
                                 {...register("nit")}
                                 aria-invalid={!!errors.nit}
                                 disabled={isPending}
+                                className="bg-white h-11 rounded-xl border-slate-200 focus-visible:ring-primary/20 shadow-sm"
                             />
                             {errors.nit && (
-                                <p className="text-xs font-medium text-destructive">
-                                    {errors.nit.message}
-                                </p>
+                                <p className="text-[11px] font-medium text-destructive">{errors.nit.message}</p>
+                            )}
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="documento_identidad" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Documento de Identidad</Label>
+                            <Input
+                                id="documento_identidad"
+                                {...register("documento_identidad")}
+                                aria-invalid={!!errors.documento_identidad}
+                                disabled={isPending}
+                                className="bg-white h-11 rounded-xl border-slate-200 focus-visible:ring-primary/20 shadow-sm"
+                            />
+                            {errors.documento_identidad && (
+                                <p className="text-[11px] font-medium text-destructive">{errors.documento_identidad.message}</p>
                             )}
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="space-y-1.5">
-                            <Label htmlFor="telefono">Teléfono</Label>
+                    <div className="space-y-2">
+                        <Label htmlFor="direccion" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Dirección</Label>
+                        <Input
+                            id="direccion"
+                            {...register("direccion")}
+                            aria-invalid={!!errors.direccion}
+                            disabled={isPending}
+                            className="bg-white h-11 rounded-xl border-slate-200 focus-visible:ring-primary/20 shadow-sm"
+                        />
+                        {errors.direccion && (
+                            <p className="text-[11px] font-medium text-destructive">{errors.direccion.message}</p>
+                        )}
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div className="space-y-2">
+                            <Label htmlFor="telefono" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Teléfono</Label>
                             <Input
                                 id="telefono"
                                 {...register("telefono")}
                                 aria-invalid={!!errors.telefono}
                                 disabled={isPending}
+                                className="bg-white h-11 rounded-xl border-slate-200 focus-visible:ring-primary/20 shadow-sm"
                             />
                             {errors.telefono && (
-                                <p className="text-xs font-medium text-destructive">
-                                    {errors.telefono.message}
-                                </p>
+                                <p className="text-[11px] font-medium text-destructive">{errors.telefono.message}</p>
                             )}
                         </div>
-                        <div className="space-y-1.5">
-                            <Label htmlFor="correo_electronico">Correo Electrónico</Label>
+                        <div className="space-y-2">
+                            <Label htmlFor="correo_electronico" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Correo Electrónico</Label>
                             <Input
                                 id="correo_electronico"
                                 type="email"
                                 {...register("correo_electronico")}
                                 aria-invalid={!!errors.correo_electronico}
                                 disabled={isPending}
+                                className="bg-white h-11 rounded-xl border-slate-200 focus-visible:ring-primary/20 shadow-sm"
                             />
                             {errors.correo_electronico && (
-                                <p className="text-xs font-medium text-destructive">
-                                    {errors.correo_electronico.message}
-                                </p>
+                                <p className="text-[11px] font-medium text-destructive">{errors.correo_electronico.message}</p>
                             )}
                         </div>
                     </div>
 
-                    <div className="space-y-1.5">
-                        <Label htmlFor="direccion">Dirección</Label>
+                    <div className="space-y-2">
+                        <Label htmlFor="departamento_id" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Departamento</Label>
                         <Input
-                            id="direccion"
-                            {...register("direccion")}
-                            aria-invalid={!!errors.direccion}
+                            id="departamento_id"
+                            type="number"
+                            {...register("departamento_id")}
+                            aria-invalid={!!errors.departamento_id}
                             disabled={isPending}
+                            className="bg-white h-11 rounded-xl border-slate-200 focus-visible:ring-primary/20 shadow-sm"
                         />
-                        {errors.direccion && (
-                            <p className="text-xs font-medium text-destructive">
-                                {errors.direccion.message}
-                            </p>
+                        {errors.departamento_id && (
+                            <p className="text-[11px] font-medium text-destructive">{errors.departamento_id.message}</p>
                         )}
                     </div>
 
-                    <DialogFooter className="pt-4">
-                        <Button type="button" variant="outline" onClick={onClose} disabled={isPending}>
+                    <div className="grid grid-cols-2 gap-4 pt-4">
+                        <Button 
+                            type="button" 
+                            variant="outline" 
+                            onClick={onClose} 
+                            disabled={isPending}
+                            className="h-12 rounded-xl border-slate-200 text-slate-700 font-semibold hover:bg-slate-50"
+                        >
                             Cancelar
                         </Button>
-                        <Button type="submit" disabled={isPending}>
+                        <Button 
+                            type="submit" 
+                            disabled={isPending}
+                            className="h-12 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-sm"
+                        >
                             {isPending && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
-                            {isPending ? "Guardando..." : "Guardar"}
+                            {isPending ? (clientToEdit ? "Actualizando..." : "Creando...") : (clientToEdit ? "Guardar Cambios" : "Crear Cliente")}
                         </Button>
-                    </DialogFooter>
+                    </div>
                 </form>
             </DialogContent>
         </Dialog>
