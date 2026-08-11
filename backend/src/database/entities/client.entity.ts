@@ -3,13 +3,23 @@ import { Prisma } from '@prisma/client';
 
 
 export default class ClientEntity {
-    public static async findAll() {
+    public static async findAll(skip: number = 0, take: number = 10) {
         return await prisma.clientes.findMany({
+            skip,
+            take,
             where: {
                 deleted_at: null
             },
             include: {
                 departamento: true
+            }
+        });
+    }
+
+    public static async countAll() {
+        return await prisma.clientes.count({
+            where: {
+                deleted_at: null
             }
         });
     }

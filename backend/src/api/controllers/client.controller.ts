@@ -6,11 +6,26 @@ export default class ClientController {
 
     public static async read(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const clients = await ClientEntity.findAll();
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 10;
+            const skip = (page - 1) * limit;
+
+            const [clients, total] = await Promise.all([
+                ClientEntity.findAll(skip, limit),
+                ClientEntity.countAll()
+            ]);
+
+            const totalPages = Math.ceil(total / limit);
 
             res.status(200).json({
                 message: 'Clients retrieved successfully',
-                data: clients
+                data: clients,
+                meta: {
+                    total,
+                    page,
+                    limit,
+                    totalPages
+                }
             });
         } catch (error) {
             next(error);
