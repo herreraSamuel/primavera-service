@@ -3,24 +3,38 @@ import { Prisma } from '@prisma/client';
 
 
 export default class ClientEntity {
-    public static async findAll(skip: number = 0, take: number = 10) {
+    public static async findAll(skip: number = 0, take: number = 10, search?: string) {
+        const where: Prisma.clientesWhereInput = { deleted_at: null };
+        if (search) {
+            where.OR = [
+                { primer_nombre: { contains: search, mode: 'insensitive' } },
+                { segundo_nombre: { contains: search, mode: 'insensitive' } },
+                { primer_apellido: { contains: search, mode: 'insensitive' } },
+                { segundo_apellido: { contains: search, mode: 'insensitive' } }
+            ];
+        }
         return await prisma.clientes.findMany({
             skip,
             take,
-            where: {
-                deleted_at: null
-            },
+            where,
             include: {
                 departamento: true
             }
         });
     }
 
-    public static async countAll() {
+    public static async countAll(search?: string) {
+        const where: Prisma.clientesWhereInput = { deleted_at: null };
+        if (search) {
+            where.OR = [
+                { primer_nombre: { contains: search, mode: 'insensitive' } },
+                { segundo_nombre: { contains: search, mode: 'insensitive' } },
+                { primer_apellido: { contains: search, mode: 'insensitive' } },
+                { segundo_apellido: { contains: search, mode: 'insensitive' } }
+            ];
+        }
         return await prisma.clientes.count({
-            where: {
-                deleted_at: null
-            }
+            where
         });
     }
 
