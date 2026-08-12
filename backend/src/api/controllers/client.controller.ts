@@ -8,11 +8,12 @@ export default class ClientController {
         try {
             const page = parseInt(req.query.page as string) || 1;
             const limit = parseInt(req.query.limit as string) || 10;
+            const search = req.query.search as string | undefined;
             const skip = (page - 1) * limit;
 
             const [clients, total] = await Promise.all([
-                ClientEntity.findAll(skip, limit),
-                ClientEntity.countAll()
+                ClientEntity.findAll(skip, limit, search),
+                ClientEntity.countAll(search)
             ]);
 
             const totalPages = Math.ceil(total / limit);

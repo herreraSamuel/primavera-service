@@ -50,5 +50,9 @@ export const errorHandler = (
     }
 
     console.error('Unexpected error:', err);
-    res.status(500).json({ ok: false, error: 'Internal Server Error' });
+    res.status(500).json({ 
+        ok: false, 
+        error: err.message || 'Internal Server Error',
+        stack: process.env.NODE_ENV !== 'production' ? err.stack : undefined
+    });
 };

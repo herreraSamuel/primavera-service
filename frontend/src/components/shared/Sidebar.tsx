@@ -3,13 +3,14 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Compass, CalendarCheck } from "lucide-react";
+import { LayoutDashboard, Users, Compass, CalendarCheck, Banknote } from "lucide-react";
 
 const navigationItems = [
     { name: "Inicio", href: "/", icon: LayoutDashboard },
     { name: "Clientes", href: "/clients", icon: Users },
     { name: "Paquetes", href: "/packages", icon: Compass },
     { name: "Reservas", href: "/bookings", icon: CalendarCheck },
+    { name: "Ventas", href: "/ventas", icon: Banknote },
 ];
 
 export default function Sidebar() {

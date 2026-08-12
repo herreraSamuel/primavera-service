@@ -1,7 +1,10 @@
 import { Router } from 'express';
 import VentaController from '../controllers/venta.controller.js';
 import { validateBody } from '../middlewares/validate.middleware.js';
-import { createVentaSchema, updateVentaSchema } from '../schemas/venta.schema.js';
+import { ventaSchema } from '@agency/shared';
+
+const createVentaSchema = ventaSchema;
+const updateVentaSchema = ventaSchema.partial();
 
 const router = Router({ strict: true });
 

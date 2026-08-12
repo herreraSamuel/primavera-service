@@ -4,12 +4,12 @@ import { departamentoService } from "@/services/departamento.service";
 import type { CreateClientDTO } from "@agency/shared";
 
 
-export const useClients = (page: number = 1, limit: number = 10) => {
+export const useClients = (page: number = 1, limit: number = 10, search?: string) => {
     const queryClient = useQueryClient();
 
     const clientsQuery = useQuery({
-        queryKey: ["clients", page, limit],
-        queryFn: () => clientsService.getAll(page, limit),
+        queryKey: ["clients", page, limit, search],
+        queryFn: () => clientsService.getAll(page, limit, search),
     });
 
     const clientQuery = (id: string | number) =>

@@ -6,7 +6,10 @@ export default class VentaController {
 
     public static async read(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const ventas = await VentaEntity.findAll();
+            const page = parseInt(req.query.page as string) || 1;
+            const limit = parseInt(req.query.limit as string) || 10;
+            const search = req.query.search as string | undefined;
+            const ventas = await VentaEntity.findAll(page, limit, search);
 
             res.status(200).json({
                 message: 'Sales retrieved successfully',

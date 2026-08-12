@@ -1,0 +1,267 @@
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AlertCircleIcon, Loader2Icon } from "lucide-react";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { FormInput } from "@/components/ui/FormInput";
+import { useVentas } from "./useVentas";
+import { ApiError } from "@/lib/api";
+import { ventaSchema, type Venta, type CreateVentaDTO, type VentaFormValues } from "@agency/shared";
+
+interface VentaFormModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    ventaToEdit?: Venta | null;
+}
+
+export function VentaFormModal({ isOpen, onClose, ventaToEdit }: VentaFormModalProps) {
+    const { createVenta, updateVenta, clientsQuery } = useVentas();
+
+    const {
+        register,
+        handleSubmit,
+        reset,
+        setError,
+        formState: { errors },
+    } = useForm<VentaFormValues>({
+        resolver: zodResolver(ventaSchema),
+        defaultValues: {
+            numero_recibo: "",
+            fecha_venta: new Date().toISOString().split('T')[0],
+            cliente_id: "",
+            monto_recibo: 0,
+            monto_neto: 0,
+            comision_operador: null,
+            metodo_pago: "EFECTIVO",
+        },
+    });
+
+    useEffect(() => {
+        if (isOpen) {
+            createVenta.reset();
+            updateVenta.reset();
+            if (ventaToEdit) {
+                reset({
+                    numero_recibo: ventaToEdit.numero_recibo,
+                    fecha_venta: new Date(ventaToEdit.fecha_venta).toISOString().split('T')[0],
+                    cliente_id: ventaToEdit.cliente_id.toString(),
+                    monto_recibo: ventaToEdit.monto_recibo,
+                    monto_neto: ventaToEdit.monto_neto,
+                    comision_operador: ventaToEdit.comision_operador ?? null,
+                    metodo_pago: ventaToEdit.metodo_pago,
+                });
+            } else {
+                reset({
+                    numero_recibo: "",
+                    fecha_venta: new Date().toISOString().split('T')[0],
+                    cliente_id: "",
+                    monto_recibo: 0,
+                    monto_neto: 0,
+                    comision_operador: null,
+                    metodo_pago: "EFECTIVO",
+                });
+            }
+        }
+    }, [ventaToEdit, isOpen, reset]);
+
+    const isPending = createVenta.isPending || updateVenta.isPending;
+    const mutationError = createVenta.error || updateVenta.error;
+
+    const onSubmit = (data: VentaFormValues) => {
+        createVenta.reset();
+        updateVenta.reset();
+
+        const cleanedData: CreateVentaDTO = {
+            numero_recibo: data.numero_recibo.trim(),
+            fecha_venta: new Date(data.fecha_venta).toISOString(),
+            cliente_id: Number(data.cliente_id),
+            monto_recibo: Number(data.monto_recibo),
+            monto_neto: Number(data.monto_neto),
+            comision_operador: data.comision_operador ? Number(data.comision_operador) : null,
+            metodo_pago: data.metodo_pago,
+        };
+
+        const handleMutationError = (err: unknown) => {
+            if (err instanceof ApiError && err.errors) {
+                err.errors.forEach((fieldErr) => {
+                    if (fieldErr.field && fieldErr.field in data) {
+                        setError(fieldErr.field as keyof VentaFormValues, {
+                            type: "server",
+                            message: fieldErr.message,
+                        });
+                    }
+                });
+            }
+        };
+
+        if (ventaToEdit) {
+            updateVenta.mutate(
+                { id: ventaToEdit.id, data: cleanedData },
+                {
+                    onSuccess: () => {
+                        reset();
+                        onClose();
+                    },
+                    onError: handleMutationError,
+                }
+            );
+        } else {
+            createVenta.mutate(cleanedData, {
+                onSuccess: () => {
+                    reset();
+                    onClose();
+                },
+                onError: handleMutationError,
+            });
+        }
+    };
+
+    return (
+        <Dialog open={isOpen} onOpenChange={(open) => !open && !isPending && onClose()}>
+            <DialogContent className="sm:max-w-[700px] p-8 sm:rounded-2xl border-0 shadow-2xl" showCloseButton={false}>
+                <DialogHeader className="mb-2">
+                    <DialogTitle className="text-xl font-bold text-slate-900">
+                        {ventaToEdit ? "Editar Venta" : "Nueva Venta"}
+                    </DialogTitle>
+                </DialogHeader>
+
+                {mutationError && (
+                    <div className="rounded-lg bg-destructive/15 p-3 text-sm font-medium text-destructive border border-destructive/20 flex items-start gap-2">
+                        <AlertCircleIcon className="h-5 w-5 shrink-0 mt-0.5" />
+                        <div>
+                            <p className="font-semibold">Error al guardar venta</p>
+                            <p className="text-xs opacity-90">{mutationError.message}</p>
+                        </div>
+                    </div>
+                )}
+
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <FormInput
+                            id="numero_recibo"
+                            label="Número de Recibo"
+                            required
+                            error={errors.numero_recibo?.message}
+                            disabled={isPending}
+                            {...register("numero_recibo")}
+                        />
+                        <FormInput
+                            id="fecha_venta"
+                            label="Fecha de Venta"
+                            type="date"
+                            required
+                            error={errors.fecha_venta?.message}
+                            disabled={isPending}
+                            {...register("fecha_venta")}
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="cliente_id" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Cliente <span className="text-red-500">*</span></Label>
+                        <select
+                            id="cliente_id"
+                            {...register("cliente_id")}
+                            aria-invalid={!!errors.cliente_id}
+                            disabled={isPending || clientsQuery.isLoading}
+                            className="bg-white h-11 rounded-xl border border-slate-200 px-3 w-full outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-slate-700 text-sm shadow-sm transition-all"
+                        >
+                            <option value="">Selecciona un cliente</option>
+                            {clientsQuery.isLoading ? (
+                                <option value="" disabled>Cargando clientes...</option>
+                            ) : (
+                                clientsQuery.data?.data?.map((client) => (
+                                    <option key={client.id} value={client.id}>
+                                        {client.primer_nombre} {client.segundo_nombre || ''} {client.primer_apellido} {client.segundo_apellido || ''} ({client.documento_identidad || client.nit || 'Sin doc'})
+                                    </option>
+                                ))
+                            )}
+                        </select>
+                        {errors.cliente_id && (
+                            <p className="text-[11px] font-medium text-[#FF6347]">{errors.cliente_id.message}</p>
+                        )}
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                        <FormInput
+                            id="monto_recibo"
+                            label="Monto del Recibo"
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            required
+                            error={errors.monto_recibo?.message}
+                            disabled={isPending}
+                            {...register("monto_recibo")}
+                        />
+                        <FormInput
+                            id="monto_neto"
+                            label="Monto Neto"
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            required
+                            error={errors.monto_neto?.message}
+                            disabled={isPending}
+                            {...register("monto_neto")}
+                        />
+                        <FormInput
+                            id="comision_operador"
+                            label="Comisión Operador"
+                            type="number"
+                            step="0.01"
+                            min="0"
+                            error={errors.comision_operador?.message}
+                            disabled={isPending}
+                            {...register("comision_operador")}
+                        />
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="metodo_pago" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Método de Pago <span className="text-red-500">*</span></Label>
+                        <select
+                            id="metodo_pago"
+                            {...register("metodo_pago")}
+                            aria-invalid={!!errors.metodo_pago}
+                            disabled={isPending}
+                            className="bg-white h-11 rounded-xl border border-slate-200 px-3 w-full outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-slate-700 text-sm shadow-sm transition-all"
+                        >
+                            <option value="EFECTIVO">Efectivo</option>
+                            <option value="TARJETA">Tarjeta</option>
+                            <option value="TRANSFERENCIA">Transferencia</option>
+                        </select>
+                        {errors.metodo_pago && (
+                            <p className="text-[11px] font-medium text-[#FF6347]">{errors.metodo_pago.message}</p>
+                        )}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 pt-4">
+                        <Button 
+                            type="button" 
+                            variant="outline" 
+                            onClick={onClose} 
+                            disabled={isPending}
+                            className="h-12 rounded-xl border-slate-200 text-slate-700 font-semibold hover:bg-slate-50"
+                        >
+                            Cancelar
+                        </Button>
+                        <Button 
+                            type="submit" 
+                            disabled={isPending}
+                            className="h-12 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-sm"
+                        >
+                            {isPending && <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />}
+                            {isPending ? (ventaToEdit ? "Actualizando..." : "Creando...") : (ventaToEdit ? "Guardar Cambios" : "Crear Venta")}
+                        </Button>
+                    </div>
+                </form>
+            </DialogContent>
+        </Dialog>
+    );
+}

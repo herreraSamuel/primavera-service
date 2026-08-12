@@ -169,6 +169,7 @@ enum frecuencia_gasto {
 enum tipo_metodo_pago {
   EFECTIVO
   TARJETA
+  TRANSFERENCIA
 }
 
 enum tipo_viaje_opcion {
