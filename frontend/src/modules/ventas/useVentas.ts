@@ -3,12 +3,12 @@ import { ventasService } from "@/services/venta.service";
 import { clientsService } from "@/services/client.service";
 import type { CreateVentaDTO } from "@agency/shared";
 
-export const useVentas = (page: number = 1, limit: number = 10) => {
+export const useVentas = (page: number = 1, limit: number = 10, search?: string) => {
     const queryClient = useQueryClient();
 
     const ventasQuery = useQuery({
-        queryKey: ["ventas", page, limit],
-        queryFn: () => ventasService.getAll(page, limit),
+        queryKey: ["ventas", page, limit, search],
+        queryFn: () => ventasService.getAll(page, limit, search),
     });
 
     const ventaQuery = (id: string | number) =>

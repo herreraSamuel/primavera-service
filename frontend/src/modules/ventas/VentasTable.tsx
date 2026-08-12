@@ -2,7 +2,7 @@
 
 import { useVentas } from "./useVentas";
 import { Edit, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { VentaFormModal } from "./VentaFormModal";
 import { VentaDetailsModal } from "./VentaDetailsModal";
@@ -12,7 +12,17 @@ import { DataTable, type Column } from "@/components/ui/DataTable";
 export default function VentasTable() {
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
-    const { ventasQuery, deleteVenta } = useVentas(page, limit);
+    const [search, setSearch] = useState("");
+    const [debouncedSearch, setDebouncedSearch] = useState("");
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(search);
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [search]);
+
+    const { ventasQuery, deleteVenta } = useVentas(page, limit, debouncedSearch);
     const [deletingVentaId, setDeletingVentaId] = useState<string | number | null>(null);
     const [editingVenta, setEditingVenta] = useState<Venta | null>(null);
     const [viewingVenta, setViewingVenta] = useState<Venta | null>(null);
@@ -108,7 +118,12 @@ export default function VentasTable() {
                 </svg>
                 <input 
                     type="text" 
-                    placeholder="Buscar por recibo..." 
+                    value={search}
+                    onChange={(e) => {
+                        setSearch(e.target.value);
+                        setPage(1);
+                    }}
+                    placeholder="Buscar por recibo o cliente..." 
                     className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all placeholder:text-slate-400"
                 />
             </div>

@@ -41,17 +41,16 @@ export function DataTable<T extends { id: string | number | bigint }>({
 }: DataTableProps<T>) {
     if (isError) {
         return (
-            <div className="p-4 bg-red-50 text-red-600 rounded-lg border border-red-100 text-sm mt-6">
-                {errorMessage}
-            </div>
-        );
-    }
-
-    if (isLoading) {
-        return (
             <div className="bg-white rounded-2xl border border-slate-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] overflow-hidden mt-6">
-                <div className="p-8 text-center text-slate-500 animate-pulse">
-                    Cargando datos...
+                {filtersSlot && (
+                    <div className="p-5 border-b border-slate-100">
+                        <div className="flex items-center gap-3">
+                            {filtersSlot}
+                        </div>
+                    </div>
+                )}
+                <div className="p-6 text-center text-red-600 bg-red-50/50 text-sm">
+                    {errorMessage}
                 </div>
             </div>
         );
@@ -82,7 +81,16 @@ export function DataTable<T extends { id: string | number | bigint }>({
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100">
-                        {data.length === 0 ? (
+                        {isLoading ? (
+                            <tr>
+                                <td
+                                    colSpan={columns.length}
+                                    className="px-6 py-12 text-center text-slate-500 animate-pulse"
+                                >
+                                    Cargando datos...
+                                </td>
+                            </tr>
+                        ) : data.length === 0 ? (
                             <tr>
                                 <td
                                     colSpan={columns.length}

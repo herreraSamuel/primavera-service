@@ -8,7 +8,8 @@ export default class VentaController {
         try {
             const page = parseInt(req.query.page as string) || 1;
             const limit = parseInt(req.query.limit as string) || 10;
-            const ventas = await VentaEntity.findAll(page, limit);
+            const search = req.query.search as string | undefined;
+            const ventas = await VentaEntity.findAll(page, limit, search);
 
             res.status(200).json({
                 message: 'Sales retrieved successfully',

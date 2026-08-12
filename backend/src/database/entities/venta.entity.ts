@@ -2,17 +2,28 @@ import { prisma } from '../database.js';
 import { Prisma } from '@prisma/client';
 
 export default class VentaEntity {
-    public static async findAll(page: number = 1, limit: number = 10) {
+    public static async findAll(page: number = 1, limit: number = 10, search?: string) {
         const skip = (page - 1) * limit;
+        
+        const where: Prisma.ventasWhereInput = { deleted_at: null };
+        
+        if (search) {
+            where.OR = [
+                { numero_recibo: { contains: search, mode: 'insensitive' } },
+                { clientes: { primer_nombre: { contains: search, mode: 'insensitive' } } },
+                { clientes: { primer_apellido: { contains: search, mode: 'insensitive' } } }
+            ];
+        }
+
         const [data, total] = await Promise.all([
             prisma.ventas.findMany({
-                where: { deleted_at: null },
+                where,
                 include: { clientes: true },
                 orderBy: { created_at: 'desc' },
                 skip,
                 take: limit
             }),
-            prisma.ventas.count({ where: { deleted_at: null } })
+            prisma.ventas.count({ where })
         ]);
         return { data, total, page, limit };
     }

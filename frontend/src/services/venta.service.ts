@@ -7,8 +7,12 @@ interface ApiResponse<T> {
 }
 
 export const ventasService = {
-    getAll: async (page: number = 1, limit: number = 10): Promise<PaginatedResponse<Venta>> => {
-        const { data } = await api.get<ApiResponse<PaginatedResponse<Venta>>>(`/ventas?page=${page}&limit=${limit}`);
+    getAll: async (page: number = 1, limit: number = 10, search?: string): Promise<PaginatedResponse<Venta>> => {
+        let url = `/ventas?page=${page}&limit=${limit}`;
+        if (search) {
+            url += `&search=${encodeURIComponent(search)}`;
+        }
+        const { data } = await api.get<ApiResponse<PaginatedResponse<Venta>>>(url);
         return data.data;
     },
 
