@@ -5,6 +5,7 @@ import { Edit, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { ConfirmModal } from "@/components/ui/ConfirmModal";
 import { VentaFormModal } from "./VentaFormModal";
+import { VentaDetailsModal } from "./VentaDetailsModal";
 import type { Venta } from "@agency/shared";
 import { DataTable, type Column } from "@/components/ui/DataTable";
 
@@ -14,6 +15,7 @@ export default function VentasTable() {
     const { ventasQuery, deleteVenta } = useVentas(page, limit);
     const [deletingVentaId, setDeletingVentaId] = useState<string | number | null>(null);
     const [editingVenta, setEditingVenta] = useState<Venta | null>(null);
+    const [viewingVenta, setViewingVenta] = useState<Venta | null>(null);
 
     const ventas = ventasQuery.data?.data || [];
     const meta = ventasQuery.data?.meta;
@@ -136,6 +138,7 @@ export default function VentasTable() {
                 isError={ventasQuery.isError}
                 errorMessage="Error al cargar las ventas. ¿Está encendido el servidor backend?"
                 emptyMessage="No hay ventas registradas aún."
+                onRowClick={(venta) => setViewingVenta(venta)}
                 filtersSlot={filtersSlot}
                 pagination={meta ? {
                     page: meta.page,
@@ -170,6 +173,13 @@ export default function VentasTable() {
                 isOpen={!!editingVenta}
                 onClose={() => setEditingVenta(null)}
                 ventaToEdit={editingVenta}
+            />
+
+            <VentaDetailsModal 
+                isOpen={!!viewingVenta}
+                onClose={() => setViewingVenta(null)}
+                venta={viewingVenta}
+                onEdit={(venta) => setEditingVenta(venta)}
             />
         </>
     );
