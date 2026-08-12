@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { clientsService } from "../../services/client.service";
-import { departamentoService } from "../../services/departamento.service";
+import { clientsService } from "@/services/client.service";
+import { departamentoService } from "@/services/departamento.service";
 import type { CreateClientDTO } from "@agency/shared";
 
 
