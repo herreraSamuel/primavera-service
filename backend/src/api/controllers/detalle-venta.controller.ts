@@ -74,6 +74,25 @@ export default class DetalleVentaController {
         }
     }
 
+    public static async createMany(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { items } = req.body;
+
+            if (!Array.isArray(items) || items.length === 0) {
+                throw new BadRequest('Items array is required and must not be empty');
+            }
+
+            const detalles = await DetalleVentaEntity.createMany(items);
+
+            res.status(201).json({
+                message: 'Sale details created successfully',
+                data: detalles
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
     public static async update(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             const { id } = req.params;
