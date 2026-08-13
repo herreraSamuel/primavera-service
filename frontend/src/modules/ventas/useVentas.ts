@@ -11,7 +11,7 @@ export const useVentas = (page: number = 1, limit: number = 10, search?: string)
         queryFn: () => ventasService.getAll(page, limit, search),
     });
 
-    const ventaQuery = (id: string | number) =>
+    const useVentaQuery = (id: string | number) =>
         useQuery({
             queryKey: ["ventas", id],
             queryFn: () => ventasService.getById(id),
@@ -52,7 +52,7 @@ export const useVentas = (page: number = 1, limit: number = 10, search?: string)
 
     return {
         ventasQuery,
-        ventaQuery,
+        useVentaQuery,
         clientsQuery,
         createVenta,
         updateVenta,

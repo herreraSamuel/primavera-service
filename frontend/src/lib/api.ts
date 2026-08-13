@@ -42,12 +42,14 @@ api.interceptors.response.use(
             fieldErrors = responseData.errors;
 
             const errorDetails = responseData.errors
-                .map((err: any) =>
+                .map((err: Record<string, unknown> | string) =>
                     typeof err === "string"
                         ? err
-                        : err.field
+                        : typeof err === "object" && err !== null && "field" in err && "message" in err
                         ? `${err.field}: ${err.message}`
-                        : err.message
+                        : typeof err === "object" && err !== null && "message" in err
+                        ? String(err.message)
+                        : "Unknown error"
                 )
                 .filter(Boolean);
 
