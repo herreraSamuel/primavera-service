@@ -3,12 +3,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Banknote } from "lucide-react";
+import { LayoutDashboard, Users, Banknote, BarChart3 } from "lucide-react";
 
 const navigationItems = [
     { name: "Inicio", href: "/", icon: LayoutDashboard },
     { name: "Clientes", href: "/clients", icon: Users },
     { name: "Ventas", href: "/ventas", icon: Banknote },
+    { name: "Ganancias", href: "/ganancias", icon: BarChart3 },
 ];
 
 export default function Sidebar() {
