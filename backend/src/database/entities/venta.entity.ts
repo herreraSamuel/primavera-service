@@ -56,4 +56,42 @@ export default class VentaEntity {
             }
         });
     }
+
+    public static async getEstadisticas(startDate?: string, endDate?: string) {
+        const where: Prisma.ventasWhereInput = { deleted_at: null };
+
+        if (startDate || endDate) {
+            where.fecha_venta = {};
+            if (startDate) {
+                where.fecha_venta.gte = new Date(startDate);
+            }
+            if (endDate) {
+                where.fecha_venta.lte = new Date(endDate);
+            }
+        }
+
+        const [aggregation, count] = await Promise.all([
+            prisma.ventas.aggregate({
+                where,
+                _sum: {
+                    monto_recibo: true,
+                    monto_neto: true,
+                    comision_operador: true,
+                },
+            }),
+            prisma.ventas.count({ where }),
+        ]);
+
+        const totalBruto = Number(aggregation._sum.monto_recibo ?? 0);
+        const totalNeto = Number(aggregation._sum.monto_neto ?? 0);
+        const comisionTotal = Number(aggregation._sum.comision_operador ?? 0);
+
+        return {
+            total_bruto: totalBruto,
+            total_neto: totalNeto,
+            comision_total: comisionTotal,
+            ganancia_total: totalBruto - totalNeto,
+            ventas_count: count,
+        };
+    }
 }

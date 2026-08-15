@@ -96,4 +96,35 @@ export default class VentaController {
             next(error);
         }
     }
+    public static async estadisticas(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            let { startDate, endDate, mes, anio } = req.query as {
+                startDate?: string;
+                endDate?: string;
+                mes?: string;
+                anio?: string;
+            };
+
+            if (mes && anio) {
+                const month = parseInt(mes);
+                const year = parseInt(anio);
+
+                if (isNaN(month) || isNaN(year) || month < 1 || month > 12) {
+                    throw new BadRequest('Invalid mes or anio parameter');
+                }
+
+                startDate = new Date(year, month - 1, 1).toISOString();
+                endDate = new Date(year, month, 0).toISOString();
+            }
+
+            const estadisticas = await VentaEntity.getEstadisticas(startDate, endDate);
+
+            res.status(200).json({
+                message: 'Statistics retrieved successfully',
+                data: estadisticas
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
 }
