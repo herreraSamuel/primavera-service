@@ -7,7 +7,6 @@ import {
     DialogContent,
     DialogHeader,
     DialogTitle,
-    DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -79,6 +78,7 @@ export function ClientFormModal({ isOpen, onClose, clientToEdit }: ClientFormMod
                 });
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [clientToEdit, isOpen, reset]);
 
     const isPending = createClient.isPending || updateClient.isPending;

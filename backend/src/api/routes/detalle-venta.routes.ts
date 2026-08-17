@@ -8,6 +8,7 @@ const router = Router({ strict: true });
 router.get('/', DetalleVentaController.read);
 router.get('/venta/:ventaId', DetalleVentaController.readByVentaId);
 router.get('/:id', DetalleVentaController.readById);
+router.post('/bulk', DetalleVentaController.createMany);
 router.post('/', validateBody(createDetalleVentaSchema), DetalleVentaController.create);
 router.patch('/:id', validateBody(updateDetalleVentaSchema), DetalleVentaController.update);
 router.delete('/:id', DetalleVentaController.delete);

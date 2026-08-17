@@ -69,6 +69,7 @@ export function VentaFormModal({ isOpen, onClose, ventaToEdit }: VentaFormModalP
                 });
             }
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [ventaToEdit, isOpen, reset]);
 
     const isPending = createVenta.isPending || updateVenta.isPending;

@@ -12,7 +12,7 @@ export const useClients = (page: number = 1, limit: number = 10, search?: string
         queryFn: () => clientsService.getAll(page, limit, search),
     });
 
-    const clientQuery = (id: string | number) =>
+    const useClientQuery = (id: string | number) =>
         useQuery({
             queryKey: ["clients", id],
             queryFn: () => clientsService.getById(id),
@@ -53,7 +53,7 @@ export const useClients = (page: number = 1, limit: number = 10, search?: string
 
     return {
         clientsQuery,
-        clientQuery,
+        useClientQuery,
         departamentosQuery,
         createClient,
         updateClient,
