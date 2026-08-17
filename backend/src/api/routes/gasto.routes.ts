@@ -6,6 +6,7 @@ import { createGastoSchema, updateGastoSchema } from '../schemas/gasto.schema.js
 const router = Router({ strict: true });
 
 router.get('/', GastoController.read);
+router.get('/summary', GastoController.getMonthlySummary);
 router.get('/:id', GastoController.readById);
 router.post('/', validateBody(createGastoSchema), GastoController.create);
 router.patch('/:id', validateBody(updateGastoSchema), GastoController.update);
