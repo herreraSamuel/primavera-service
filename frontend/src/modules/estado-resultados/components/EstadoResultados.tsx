@@ -31,6 +31,8 @@ export default function EstadoResultados() {
 
   const resumen = data?.resumen;
   const ventasDetalle = data?.ventasDetalle ?? [];
+  const gastosFijosDetalle = data?.gastosFijosDetalle ?? [];
+  const gastosVariablesDetalle = data?.gastosVariablesDetalle ?? [];
 
   return (
     <div className="p-6 md:p-8 max-w-7xl mx-auto min-h-screen bg-slate-50/50 print:bg-white print:p-0">
@@ -201,6 +203,16 @@ export default function EstadoResultados() {
                           <span className="font-semibold">Gastos variables</span>
                           <span className="font-semibold text-red-500">{formatCurrency(resumen.gastosVariables)}</span>
                         </div>
+                        {resumen.detallesGastosVariables.length > 0 && (
+                          <div className="pl-4 space-y-2 border-l-2 border-slate-100 py-1">
+                            {resumen.detallesGastosVariables.map((gasto, index) => (
+                              <div key={index} className="flex justify-between items-center text-sm text-slate-500">
+                                <span>{gasto.descripcion}</span>
+                                <span>{formatCurrency(gasto.monto)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
 
                         <div className="pt-3 border-t border-slate-100 flex justify-between items-center font-bold text-slate-800">
                           <span>Total gastos operacionales</span>
@@ -222,56 +234,181 @@ export default function EstadoResultados() {
                     </section>
                   </div>
                 ) : (
-                  <div>
-                    <h3 className="text-sm font-bold text-slate-500 tracking-wider mb-6 border-b border-slate-200 pb-2">
-                      DETALLE DE VENTAS
-                    </h3>
-                    {ventasDetalle.length === 0 ? (
-                      <p className="text-center text-slate-400 py-12">No hay ventas registradas en este período.</p>
-                    ) : (
-                      <div className="overflow-x-auto">
-                        <table className="w-full text-left border-collapse">
-                          <thead>
-                            <tr className="border-b border-slate-200 text-xs font-semibold text-slate-500">
-                              <th className="py-3 px-2">RECIBO</th>
-                              <th className="py-3 px-2">CLIENTE</th>
-                              <th className="py-3 px-2">MÉTODO</th>
-                              <th className="py-3 px-2 text-right">MONTO BRUTO</th>
-                              <th className="py-3 px-2 text-right">COSTO NETO</th>
-                              <th className="py-3 px-2 text-right">GANANCIA VENTA</th>
-                              <th className="py-3 px-2 text-right">COMISIÓN (+)</th>
-                            </tr>
-                          </thead>
-                          <tbody className="text-sm divide-y divide-slate-100">
-                            {ventasDetalle.map((venta) => (
-                              <tr key={venta.id} className="hover:bg-slate-50/50 transition-colors">
-                                <td className="py-4 px-2 font-medium text-slate-700">{venta.recibo}</td>
-                                <td className="py-4 px-2 text-slate-600 max-w-[200px] leading-snug">
-                                  {venta.cliente}
-                                </td>
-                                <td className="py-4 px-2">
-                                  <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold bg-slate-100 text-slate-700">
-                                    {venta.metodoPago}
-                                  </span>
-                                </td>
-                                <td className="py-4 px-2 text-right font-medium text-slate-700">
-                                  {formatCurrency(venta.montoBruto)}
-                                </td>
-                                <td className="py-4 px-2 text-right text-slate-500">
-                                  {formatCurrency(venta.montoNeto)}
-                                </td>
-                                <td className="py-4 px-2 text-right font-semibold text-[#0367A6]">
-                                  {formatCurrency(venta.gananciaNeta)}
-                                </td>
-                                <td className="py-4 px-2 text-right font-medium text-emerald-600">
-                                  {venta.comisionOperador > 0 ? `+${formatCurrency(venta.comisionOperador)}` : "—"}
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
+                  <div className="space-y-12">
+                    <section>
+                      <div className="flex justify-between items-center border-b border-slate-200 pb-2 mb-4">
+                        <h3 className="text-sm font-bold text-[#0367A6] tracking-wider uppercase">
+                          1. Detalle de Ventas e Ingresos
+                        </h3>
+                        <span className="text-xs font-semibold text-slate-500">
+                          {ventasDetalle.length} {ventasDetalle.length === 1 ? 'registro' : 'registros'}
+                        </span>
                       </div>
-                    )}
+
+                      {ventasDetalle.length === 0 ? (
+                        <p className="text-center text-slate-400 py-8 text-sm">No hay ventas registradas en este período.</p>
+                      ) : (
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-left border-collapse">
+                            <thead>
+                              <tr className="border-b border-slate-200 text-xs font-semibold text-slate-500">
+                                <th className="py-3 px-2">RECIBO</th>
+                                <th className="py-3 px-2">CLIENTE</th>
+                                <th className="py-3 px-2 text-right">MONTO BRUTO</th>
+                                <th className="py-3 px-2 text-right">COSTO NETO</th>
+                                <th className="py-3 px-2 text-right">GANANCIA VENTA</th>
+                                <th className="py-3 px-2 text-right">COMISIÓN (+)</th>
+                              </tr>
+                            </thead>
+                            <tbody className="text-sm divide-y divide-slate-100">
+                              {ventasDetalle.map((venta) => (
+                                <tr key={venta.id} className="hover:bg-slate-50/50 transition-colors">
+                                  <td className="py-3.5 px-2 font-medium text-slate-700">{venta.recibo}</td>
+                                  <td className="py-3.5 px-2 text-slate-600 max-w-[200px] leading-snug">
+                                    {venta.cliente}
+                                  </td>
+                                  <td className="py-3.5 px-2 text-right font-medium text-slate-700">
+                                    {formatCurrency(venta.montoBruto)}
+                                  </td>
+                                  <td className="py-3.5 px-2 text-right text-slate-500">
+                                    {formatCurrency(venta.montoNeto)}
+                                  </td>
+                                  <td className="py-3.5 px-2 text-right font-semibold text-[#0367A6]">
+                                    {formatCurrency(venta.gananciaNeta)}
+                                  </td>
+                                  <td className="py-3.5 px-2 text-right font-medium text-emerald-600">
+                                    {venta.comisionOperador > 0 ? `+${formatCurrency(venta.comisionOperador)}` : "—"}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                            <tfoot>
+                              <tr className="border-t-2 border-slate-200 font-semibold text-sm text-slate-800">
+                                <td colSpan={2} className="py-3 px-2">Total Ingresos de Ventas</td>
+                                <td className="py-3 px-2 text-right">{formatCurrency(resumen.totalVentasBrutas)}</td>
+                                <td className="py-3 px-2 text-right text-slate-500">{formatCurrency(resumen.costoServiciosNeto)}</td>
+                                <td className="py-3 px-2 text-right text-[#0367A6]">{formatCurrency(resumen.gananciaNetaVentas)}</td>
+                                <td className="py-3 px-2 text-right text-emerald-600">+{formatCurrency(resumen.comisionOperadoresTotal)}</td>
+                              </tr>
+                            </tfoot>
+                          </table>
+                        </div>
+                      )}
+                    </section>
+
+                    <section>
+                      <div className="flex justify-between items-center border-b border-slate-200 pb-2 mb-4">
+                        <h3 className="text-sm font-bold text-red-500 tracking-wider uppercase">
+                          2. Detalle de Gastos Fijos Confirmados
+                        </h3>
+                        <span className="text-xs font-semibold text-slate-500">
+                          {gastosFijosDetalle.length} {gastosFijosDetalle.length === 1 ? 'registro' : 'registros'}
+                        </span>
+                      </div>
+
+                      {gastosFijosDetalle.length === 0 ? (
+                        <p className="text-center text-slate-400 py-6 text-sm">No hay gastos fijos confirmados en este período.</p>
+                      ) : (
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-left border-collapse">
+                            <thead>
+                              <tr className="border-b border-slate-200 text-xs font-semibold text-slate-500">
+                                <th className="py-3 px-2">CONCEPTO</th>
+                                <th className="py-3 px-2">CATEGORÍA</th>
+                                <th className="py-3 px-2">FECHA</th>
+                                <th className="py-3 px-2 text-right">MONTO</th>
+                              </tr>
+                            </thead>
+                            <tbody className="text-sm divide-y divide-slate-100">
+                              {gastosFijosDetalle.map((gasto) => (
+                                <tr key={gasto.id} className="hover:bg-slate-50/50 transition-colors">
+                                  <td className="py-3.5 px-2 font-medium text-slate-700">{gasto.descripcion}</td>
+                                  <td className="py-3.5 px-2 text-slate-500">{gasto.categoria}</td>
+                                  <td className="py-3.5 px-2 text-slate-400 text-xs">{gasto.fecha || "—"}</td>
+                                  <td className="py-3.5 px-2 text-right font-semibold text-red-500">
+                                    {formatCurrency(gasto.monto)}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                            <tfoot>
+                              <tr className="border-t-2 border-slate-200 font-semibold text-sm text-slate-800">
+                                <td colSpan={3} className="py-3 px-2">Subtotal Gastos Fijos</td>
+                                <td className="py-3 px-2 text-right text-red-600">{formatCurrency(resumen.gastosFijosConfirmados)}</td>
+                              </tr>
+                            </tfoot>
+                          </table>
+                        </div>
+                      )}
+                    </section>
+
+                    <section>
+                      <div className="flex justify-between items-center border-b border-slate-200 pb-2 mb-4">
+                        <h3 className="text-sm font-bold text-red-500 tracking-wider uppercase">
+                          3. Detalle de Gastos Variables
+                        </h3>
+                        <span className="text-xs font-semibold text-slate-500">
+                          {gastosVariablesDetalle.length} {gastosVariablesDetalle.length === 1 ? 'registro' : 'registros'}
+                        </span>
+                      </div>
+
+                      {gastosVariablesDetalle.length === 0 ? (
+                        <p className="text-center text-slate-400 py-6 text-sm">No hay gastos variables en este período.</p>
+                      ) : (
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-left border-collapse">
+                            <thead>
+                              <tr className="border-b border-slate-200 text-xs font-semibold text-slate-500">
+                                <th className="py-3 px-2">CONCEPTO</th>
+                                <th className="py-3 px-2">CATEGORÍA</th>
+                                <th className="py-3 px-2">FECHA</th>
+                                <th className="py-3 px-2 text-right">MONTO</th>
+                              </tr>
+                            </thead>
+                            <tbody className="text-sm divide-y divide-slate-100">
+                              {gastosVariablesDetalle.map((gasto) => (
+                                <tr key={gasto.id} className="hover:bg-slate-50/50 transition-colors">
+                                  <td className="py-3.5 px-2 font-medium text-slate-700">{gasto.descripcion}</td>
+                                  <td className="py-3.5 px-2 text-slate-500">{gasto.categoria}</td>
+                                  <td className="py-3.5 px-2 text-slate-400 text-xs">{gasto.fecha || "—"}</td>
+                                  <td className="py-3.5 px-2 text-right font-semibold text-red-500">
+                                    {formatCurrency(gasto.monto)}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                            <tfoot>
+                              <tr className="border-t-2 border-slate-200 font-semibold text-sm text-slate-800">
+                                <td colSpan={3} className="py-3 px-2">Subtotal Gastos Variables</td>
+                                <td className="py-3 px-2 text-right text-red-600">{formatCurrency(resumen.gastosVariables)}</td>
+                              </tr>
+                            </tfoot>
+                          </table>
+                        </div>
+                      )}
+                    </section>
+
+                    <section className="bg-slate-50 rounded-xl p-6 border border-slate-200">
+                      <h4 className="text-xs font-bold text-slate-400 tracking-wider uppercase mb-4">
+                        4. Liquidación Final del Período
+                      </h4>
+                      <div className="space-y-3 text-sm">
+                        <div className="flex justify-between text-slate-600">
+                          <span>Total Ingresos de la Agencia (Ventas + Comisiones)</span>
+                          <span className="font-semibold text-slate-900">{formatCurrency(resumen.totalIngresosAgencia)}</span>
+                        </div>
+                        <div className="flex justify-between text-slate-600">
+                          <span>Total Gastos Operacionales (Fijos + Variables)</span>
+                          <span className="font-semibold text-red-500">-{formatCurrency(resumen.totalGastosOperacionales)}</span>
+                        </div>
+                        <div className="pt-3 border-t border-slate-200 flex justify-between items-center font-bold text-base">
+                          <span className="text-slate-900">Utilidad Neta del Período</span>
+                          <span className={`text-xl font-black ${resumen.utilidadNeta >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                            {formatCurrency(resumen.utilidadNeta)}
+                          </span>
+                        </div>
+                      </div>
+                    </section>
                   </div>
                 )}
               </div>

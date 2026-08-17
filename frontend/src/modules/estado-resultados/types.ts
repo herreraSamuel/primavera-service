@@ -9,8 +9,16 @@ export interface VentaDetalleER {
   comisionOperador: number;
 }
 
-export interface DetalleGastoFijo {
+export interface DetalleGastoItem {
   descripcion: string;
+  monto: number;
+}
+
+export interface GastoRegistroDetalle {
+  id: string;
+  descripcion: string;
+  categoria: string;
+  fecha: string;
   monto: number;
 }
 
@@ -22,8 +30,9 @@ export interface ResumenFinanciero {
   comisionOperadoresTotal: number;
   totalIngresosAgencia: number;
   gastosFijosConfirmados: number;
-  detallesGastosFijos: DetalleGastoFijo[];
+  detallesGastosFijos: DetalleGastoItem[];
   gastosVariables: number;
+  detallesGastosVariables: DetalleGastoItem[];
   totalGastosOperacionales: number;
   utilidadNeta: number;
   margenNeto: number;
@@ -32,4 +41,6 @@ export interface ResumenFinanciero {
 export interface EstadoResultadosData {
   resumen: ResumenFinanciero;
   ventasDetalle: VentaDetalleER[];
+  gastosFijosDetalle: GastoRegistroDetalle[];
+  gastosVariablesDetalle: GastoRegistroDetalle[];
 }

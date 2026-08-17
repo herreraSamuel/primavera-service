@@ -76,6 +76,7 @@ export default class EstadoResultadosEntity {
 
         let gastosFijosTotal = 0;
         const detallesGastosFijos: { descripcion: string; monto: number }[] = [];
+        const gastosFijosDetalle: { id: string; descripcion: string; categoria: string; fecha: string; monto: number }[] = [];
 
         gastosFijos.forEach(item => {
             const montoConfirmado = item.registro_gastos.reduce(
@@ -88,11 +89,46 @@ export default class EstadoResultadosEntity {
                     monto: montoConfirmado
                 });
             }
+
+            item.registro_gastos.forEach(record => {
+                const monto = Number(record.monto);
+                if (monto > 0) {
+                    gastosFijosDetalle.push({
+                        id: record.id.toString(),
+                        descripcion: record.descripcion_extra ? `${item.nombre} (${record.descripcion_extra})` : item.nombre,
+                        categoria: item.tipos_gasto?.nombre ?? 'Fijo',
+                        fecha: record.fecha ? record.fecha.toISOString().substring(0, 10) : '',
+                        monto
+                    });
+                }
+            });
         });
 
         const gastosVariablesTotal = gastosVariables.reduce(
             (sum, record) => sum + Number(record.monto), 0
         );
+
+        const detallesGastosVariables: { descripcion: string; monto: number }[] = [];
+        const gastosVariablesDetalle: { id: string; descripcion: string; categoria: string; fecha: string; monto: number }[] = [];
+
+        gastosVariables.forEach(record => {
+            const desc = record.descripcion_extra 
+                ? `${record.catalogo_gastos.nombre} (${record.descripcion_extra})` 
+                : record.catalogo_gastos.nombre;
+            
+            detallesGastosVariables.push({
+                descripcion: desc,
+                monto: Number(record.monto)
+            });
+
+            gastosVariablesDetalle.push({
+                id: record.id.toString(),
+                descripcion: desc,
+                categoria: record.catalogo_gastos.tipos_gasto?.nombre ?? 'Variable',
+                fecha: record.fecha ? record.fecha.toISOString().substring(0, 10) : '',
+                monto: Number(record.monto)
+            });
+        });
 
         const totalGastosOperacionales = gastosFijosTotal + gastosVariablesTotal;
 
@@ -113,6 +149,7 @@ export default class EstadoResultadosEntity {
                 gastosFijosConfirmados: gastosFijosTotal,
                 detallesGastosFijos,
                 gastosVariables: gastosVariablesTotal,
+                detallesGastosVariables,
                 totalGastosOperacionales,
                 utilidadNeta,
                 margenNeto,
@@ -129,6 +166,8 @@ export default class EstadoResultadosEntity {
                 gananciaNeta: Number(v.monto_recibo) - Number(v.monto_neto),
                 comisionOperador: Number(v.comision_operador ?? 0),
             })),
+            gastosFijosDetalle,
+            gastosVariablesDetalle,
         };
     }
 }
