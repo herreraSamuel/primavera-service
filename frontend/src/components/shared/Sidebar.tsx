@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Banknote, BarChart3, Receipt } from "lucide-react";
+import { LayoutDashboard, Users, Banknote, BarChart3, Receipt, FileText } from "lucide-react";
 
 const navigationItems = [
     { name: "Inicio", href: "/", icon: LayoutDashboard },
@@ -11,6 +11,7 @@ const navigationItems = [
     { name: "Ventas", href: "/ventas", icon: Banknote },
     { name: "Ganancias", href: "/ganancias", icon: BarChart3 },
     { name: "Gastos", href: "/gastos", icon: Receipt },
+    { name: "Edo. Resultados", href: "/estado-resultados", icon: FileText },
 ];
 
 export default function Sidebar() {
