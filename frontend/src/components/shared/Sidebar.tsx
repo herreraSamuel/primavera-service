@@ -1,9 +1,11 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Users, Banknote, BarChart3, Receipt, FileText } from "lucide-react";
+import { authService } from "@/services/auth.service";
 
 const navigationItems = [
     { name: "Inicio", href: "/", icon: LayoutDashboard },
@@ -16,6 +18,20 @@ const navigationItems = [
 
 export default function Sidebar() {
     const pathname = usePathname();
+    const [user, setUser] = useState<{ nombre: string; email: string; rol: string } | null>(null);
+
+    useEffect(() => {
+        setUser(authService.getUser());
+    }, []);
+
+    const getInitials = (name?: string) => {
+        if (!name) return "U";
+        const parts = name.trim().split(" ");
+        if (parts.length >= 2) {
+            return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+        }
+        return name.slice(0, 2).toUpperCase();
+    };
 
     return (
         <aside className="w-64 bg-sidebar text-sidebar-foreground flex flex-col h-screen border-r border-sidebar-border shadow-lg print:hidden">
@@ -41,14 +57,18 @@ export default function Sidebar() {
                         <Link
                             key={item.href}
                             href={item.href}
-                            className={`relative flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 group ${isActive
-                                ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold shadow-sm"
-                                : "text-slate-400 hover:bg-sidebar-accent/10 hover:text-slate-200"
-                                }`}
+                            className={`relative flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 group ${
+                                isActive
+                                    ? "bg-sidebar-accent text-sidebar-accent-foreground font-semibold shadow-sm"
+                                    : "text-slate-400 hover:bg-sidebar-accent/10 hover:text-slate-200"
+                            }`}
                         >
                             <Icon
-                                className={`w-5 h-5 transition-transform duration-200 group-hover:scale-110 ${isActive ? "text-sidebar-accent-foreground" : "text-slate-400 group-hover:text-slate-200"
-                                    }`}
+                                className={`w-5 h-5 transition-transform duration-200 group-hover:scale-110 ${
+                                    isActive
+                                        ? "text-sidebar-accent-foreground"
+                                        : "text-slate-400 group-hover:text-slate-200"
+                                }`}
                             />
                             <span className="truncate">{item.name}</span>
                         </Link>
@@ -58,15 +78,15 @@ export default function Sidebar() {
 
             <div className="p-4 border-t border-sidebar-border/60 shrink-0">
                 <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-[#0367A6] text-white font-bold flex items-center justify-center text-sm shadow-sm">
-                        SH
+                    <div className="w-10 h-10 rounded-full bg-[#0367A6] text-white font-bold flex items-center justify-center text-sm shadow-sm shrink-0">
+                        {getInitials(user?.nombre)}
                     </div>
                     <div className="flex flex-col text-left overflow-hidden">
                         <span className="text-sm font-semibold text-white truncate">
-                            Samuel Herrera
+                            {user?.nombre || "Usuario"}
                         </span>
-                        <span className="text-xs text-slate-400 truncate">
-                            Administrador
+                        <span className="text-xs text-slate-400 truncate uppercase tracking-wider">
+                            {user?.rol || "Usuario"}
                         </span>
                     </div>
                 </div>
