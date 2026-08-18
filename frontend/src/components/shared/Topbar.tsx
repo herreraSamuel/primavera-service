@@ -4,7 +4,7 @@ import { Bell } from "lucide-react";
 
 export default function Topbar() {
     return (
-        <header className="h-16 bg-white px-8 flex items-center justify-between sticky top-0 z-10 shadow-sm">
+        <header className="h-16 bg-white px-8 flex items-center justify-between sticky top-0 z-10 shadow-sm print:hidden">
             <div className="flex items-center text-sm">
                 <span className="text-slate-400">Viajes Primavera</span>
                 <span className="text-slate-300 mx-2">/</span>

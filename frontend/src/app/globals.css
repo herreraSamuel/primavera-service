@@ -130,3 +130,33 @@
     @apply font-sans;
   }
 }
+
+@media print {
+  @page {
+    margin: 1.5cm;
+    size: auto;
+  }
+
+  html, body {
+    height: auto !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+  }
+
+  aside, header, nav, .print\:hidden {
+    display: none !important;
+  }
+
+  main {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: visible !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

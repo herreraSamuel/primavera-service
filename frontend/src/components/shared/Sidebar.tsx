@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Banknote, BarChart3, Receipt } from "lucide-react";
+import { LayoutDashboard, Users, Banknote, BarChart3, Receipt, FileText } from "lucide-react";
 
 const navigationItems = [
     { name: "Inicio", href: "/", icon: LayoutDashboard },
@@ -11,13 +11,14 @@ const navigationItems = [
     { name: "Ventas", href: "/ventas", icon: Banknote },
     { name: "Ganancias", href: "/ganancias", icon: BarChart3 },
     { name: "Gastos", href: "/gastos", icon: Receipt },
+    { name: "Edo. Resultados", href: "/estado-resultados", icon: FileText },
 ];
 
 export default function Sidebar() {
     const pathname = usePathname();
 
     return (
-        <aside className="w-64 bg-sidebar text-sidebar-foreground flex flex-col h-screen border-r border-sidebar-border shadow-lg">
+        <aside className="w-64 bg-sidebar text-sidebar-foreground flex flex-col h-screen border-r border-sidebar-border shadow-lg print:hidden">
             <div className="p-4 border-b border-sidebar-border/60 flex flex-col items-center justify-center shrink-0">
                 <div className="relative w-full h-32">
                     <Image

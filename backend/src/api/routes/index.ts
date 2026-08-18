@@ -8,6 +8,7 @@ import paisesRoutes from './paises.routes.js';
 import operadoresRoutes from './operadores.routes.js';
 import aerolineasRoutes from './aerolineas.routes.js';
 import gastoRoutes from './gasto.routes.js';
+import estadoResultadosRoutes from './estado-resultados.routes.js';
 
 const appRouter = Router();
 
@@ -20,5 +21,6 @@ appRouter.use('/paises', paisesRoutes);
 appRouter.use('/operadores', operadoresRoutes);
 appRouter.use('/aerolineas', aerolineasRoutes);
 appRouter.use('/gastos', gastoRoutes);
+appRouter.use('/estado-resultados', estadoResultadosRoutes);
 
 export default appRouter;
