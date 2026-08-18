@@ -19,7 +19,10 @@ class Server {
   }
 
   private middlewares(): void {
-    this.app.use(cors());
+    this.app.use(cors({
+      origin: process.env.FRONTEND_URL || 'http://localhost:3001',
+      credentials: true,
+    }));
     this.app.use(cookieParser());
     this.app.use(express.json({ limit: '10mb' }));
 
