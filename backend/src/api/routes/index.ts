@@ -9,9 +9,11 @@ import operadoresRoutes from './operadores.routes.js';
 import aerolineasRoutes from './aerolineas.routes.js';
 import gastoRoutes from './gasto.routes.js';
 import estadoResultadosRoutes from './estado-resultados.routes.js';
+import authRoutes from './auth.routes.js';
 
 const appRouter = Router();
 
+appRouter.use('/auth', authRoutes);
 appRouter.use('/clients', clientRoutes);
 appRouter.use('/departamentos', departamentoRoutes);
 appRouter.use('/ventas', ventaRoutes);
@@ -23,4 +25,4 @@ appRouter.use('/aerolineas', aerolineasRoutes);
 appRouter.use('/gastos', gastoRoutes);
 appRouter.use('/estado-resultados', estadoResultadosRoutes);
 
-export default appRouter;
+export default appRouter;
