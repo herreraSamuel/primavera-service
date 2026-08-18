@@ -24,6 +24,16 @@ export const api = axios.create({
     },
 });
 
+api.interceptors.request.use((config) => {
+    if (typeof window !== "undefined") {
+        const token = localStorage.getItem("token");
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+    }
+    return config;
+});
+
 api.interceptors.response.use(
     (response) => {
         return response;
@@ -57,6 +67,15 @@ api.interceptors.response.use(
                 customMessage = `${responseData.message || "Error de validación"}: ${errorDetails.join(
                     "; "
                 )}`;
+            }
+        }
+
+        if (error.response?.status === 401 && typeof window !== "undefined") {
+            const isLoginRequest = error.config?.url?.includes("/auth/login");
+            if (!isLoginRequest) {
+                localStorage.removeItem("token");
+                localStorage.removeItem("user");
+                window.location.href = "/login";
             }
         }
 
