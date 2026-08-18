@@ -22,16 +22,7 @@ export const api = axios.create({
     headers: {
         "Content-Type": "application/json",
     },
-});
-
-api.interceptors.request.use((config) => {
-    if (typeof window !== "undefined") {
-        const token = localStorage.getItem("token");
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
-    }
-    return config;
+    withCredentials: true,
 });
 
 api.interceptors.response.use(
@@ -73,8 +64,7 @@ api.interceptors.response.use(
         if (error.response?.status === 401 && typeof window !== "undefined") {
             const isLoginRequest = error.config?.url?.includes("/auth/login");
             if (!isLoginRequest) {
-                localStorage.removeItem("token");
-                localStorage.removeItem("user");
+                localStorage.removeItem("user_data");
                 window.location.href = "/login";
             }
         }

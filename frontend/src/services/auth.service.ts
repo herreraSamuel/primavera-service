@@ -17,38 +17,43 @@ interface LoginResponse {
     message: string;
     data: {
         user: AuthUser;
-        token: string;
     };
 }
 
 export const authService = {
-    login: async (payload: LoginPayload): Promise<LoginResponse["data"]> => {
+    login: async (payload: LoginPayload): Promise<AuthUser> => {
         const { data } = await api.post<LoginResponse>("/auth/login", payload);
-        return data.data;
+        return data.data.user;
     },
 
-    logout: () => {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-    },
-
-    getToken: (): string | null => {
-        if (typeof window === "undefined") return null;
-        return localStorage.getItem("token");
+    logout: async () => {
+        try {
+            await api.post("/auth/logout");
+        } catch (error) {
+            console.error("Error al cerrar sesión", error);
+        } finally {
+            localStorage.removeItem("user_data");
+        }
     },
 
     getUser: (): AuthUser | null => {
         if (typeof window === "undefined") return null;
-        const user = localStorage.getItem("user");
-        return user ? JSON.parse(user) : null;
+        const user = localStorage.getItem("user_data");
+        if (!user || user === "undefined") return null;
+        
+        try {
+            return JSON.parse(user);
+        } catch (error) {
+            console.error("Error parsing user_data from localStorage:", error);
+            return null;
+        }
     },
 
-    setSession: (token: string, user: AuthUser) => {
-        localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(user));
+    setSession: (user: AuthUser) => {
+        localStorage.setItem("user_data", JSON.stringify(user));
     },
 
     isAuthenticated: (): boolean => {
-        return !!authService.getToken();
+        return !!authService.getUser();
     },
 };

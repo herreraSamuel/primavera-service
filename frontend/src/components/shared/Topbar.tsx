@@ -40,8 +40,8 @@ export default function Topbar() {
         };
     }, [isOpen]);
 
-    const handleLogout = () => {
-        authService.logout();
+    const handleLogout = async () => {
+        await authService.logout();
         router.replace("/login");
     };
 

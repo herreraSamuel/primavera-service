@@ -29,8 +29,8 @@ export default function LoginPage() {
         setIsLoading(true);
 
         try {
-            const { token, user } = await authService.login(formData);
-            authService.setSession(token, user);
+            const user = await authService.login(formData);
+            authService.setSession(user);
             router.push("/clients");
         } catch (err: unknown) {
             const message =
