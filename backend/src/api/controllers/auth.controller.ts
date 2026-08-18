@@ -57,6 +57,13 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
       { expiresIn: '1d' }
     );
 
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000,
+    });
+
     const { password: _, ...userWithoutPassword } = user;
 
     res.status(200).json({
