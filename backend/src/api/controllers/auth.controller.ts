@@ -5,7 +5,7 @@ import { UsuarioEntity } from '../../database/entities/usuario.entity.js';
 
 export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { nombre, email, password } = req.body;
+    const { nombre, email, password, rol } = req.body;
 
     const existingUser = await UsuarioEntity.findByEmail(email);
     if (existingUser) {
@@ -20,6 +20,7 @@ export const register = async (req: Request, res: Response, next: NextFunction):
       nombre,
       email,
       password: hashedPassword,
+      ...(rol && { rol }),
     });
 
     const { password: _, ...userWithoutPassword } = newUser;
