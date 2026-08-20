@@ -2,6 +2,8 @@ import 'dotenv/config';
 import express, { type Application } from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
 import appRouter from './api/routes/index.js';
 import { errorHandler } from './api/middlewares/error.middleware.js';
 
@@ -19,6 +21,15 @@ class Server {
   }
 
   private middlewares(): void {
+    this.app.use(helmet());
+
+    const limiter = rateLimit({
+      windowMs: 15 * 60 * 1000,
+      max: 100,
+      message: 'Demasiadas peticiones desde esta IP, por favor intenta de nuevo en 15 minutos.',
+    });
+    this.app.use(limiter);
+
     this.app.use(cors({
       origin: process.env.FRONTEND_URL || 'http://localhost:3001',
       credentials: true,
