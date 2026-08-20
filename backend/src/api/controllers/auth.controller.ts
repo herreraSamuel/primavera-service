@@ -55,14 +55,14 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
     const token = jwt.sign(
       { id: user.id, email: user.email, rol: user.rol },
       jwtSecret,
-      { expiresIn: '1d' }
+      { expiresIn: '1h' }
     );
 
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 60 * 60 * 1000,
     });
 
     const { password: _, ...userWithoutPassword } = user;
@@ -72,7 +72,6 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
       message: 'Inicio de sesión exitoso',
       data: {
         user: userWithoutPassword,
-        token,
       },
     });
   } catch (error) {
