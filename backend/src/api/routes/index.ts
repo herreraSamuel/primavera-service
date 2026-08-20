@@ -11,22 +11,23 @@ import gastoRoutes from './gasto.routes.js';
 import estadoResultadosRoutes from './estado-resultados.routes.js';
 import authRoutes from './auth.routes.js';
 import { authMiddleware } from '../middlewares/auth.middleware.js';
+import { requireRole } from '../middlewares/role.middleware.js';
 
 const appRouter = Router();
 
 appRouter.use('/auth', authRoutes);
-
 appRouter.use(authMiddleware);
 
-appRouter.use('/clients', clientRoutes);
-appRouter.use('/departamentos', departamentoRoutes);
-appRouter.use('/ventas', ventaRoutes);
-appRouter.use('/detalles-venta', detalleVentaRoutes);
-appRouter.use('/servicios', serviciosRoutes);
-appRouter.use('/paises', paisesRoutes);
-appRouter.use('/operadores', operadoresRoutes);
-appRouter.use('/aerolineas', aerolineasRoutes);
-appRouter.use('/gastos', gastoRoutes);
-appRouter.use('/estado-resultados', estadoResultadosRoutes);
+appRouter.use('/clients', requireRole(['ADMIN', 'VENDEDOR']), clientRoutes);
+appRouter.use('/ventas', requireRole(['ADMIN', 'VENDEDOR']), ventaRoutes);
+appRouter.use('/detalles-venta', requireRole(['ADMIN', 'VENDEDOR']), detalleVentaRoutes);
+
+appRouter.use('/departamentos', requireRole(['ADMIN']), departamentoRoutes);
+appRouter.use('/servicios', requireRole(['ADMIN']), serviciosRoutes);
+appRouter.use('/paises', requireRole(['ADMIN']), paisesRoutes);
+appRouter.use('/operadores', requireRole(['ADMIN']), operadoresRoutes);
+appRouter.use('/aerolineas', requireRole(['ADMIN']), aerolineasRoutes);
+appRouter.use('/gastos', requireRole(['ADMIN']), gastoRoutes);
+appRouter.use('/estado-resultados', requireRole(['ADMIN']), estadoResultadosRoutes);
 
 export default appRouter;
