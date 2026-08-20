@@ -22,6 +22,7 @@ export const api = axios.create({
     headers: {
         "Content-Type": "application/json",
     },
+    withCredentials: true,
 });
 
 api.interceptors.response.use(
@@ -57,6 +58,14 @@ api.interceptors.response.use(
                 customMessage = `${responseData.message || "Error de validación"}: ${errorDetails.join(
                     "; "
                 )}`;
+            }
+        }
+
+        if (error.response?.status === 401 && typeof window !== "undefined") {
+            const isLoginRequest = error.config?.url?.includes("/auth/login");
+            if (!isLoginRequest) {
+                localStorage.removeItem("user_data");
+                window.location.href = "/login";
             }
         }
 

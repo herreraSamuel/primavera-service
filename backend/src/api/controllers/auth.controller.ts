@@ -5,7 +5,7 @@ import { UsuarioEntity } from '../../database/entities/usuario.entity.js';
 
 export const register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const { nombre, email, password } = req.body;
+    const { nombre, email, password, rol } = req.body;
 
     const existingUser = await UsuarioEntity.findByEmail(email);
     if (existingUser) {
@@ -20,6 +20,7 @@ export const register = async (req: Request, res: Response, next: NextFunction):
       nombre,
       email,
       password: hashedPassword,
+      ...(rol && { rol }),
     });
 
     const { password: _, ...userWithoutPassword } = newUser;
@@ -54,14 +55,14 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
     const token = jwt.sign(
       { id: user.id, email: user.email, rol: user.rol },
       jwtSecret,
-      { expiresIn: '1d' }
+      { expiresIn: '1h' }
     );
 
     res.cookie('token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge: 60 * 60 * 1000,
     });
 
     const { password: _, ...userWithoutPassword } = user;
@@ -71,10 +72,27 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
       message: 'Inicio de sesión exitoso',
       data: {
         user: userWithoutPassword,
-        token,
       },
     });
   } catch (error) {
     next(error);
   }
 };
+
+export const logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+    });
+
+    res.status(200).json({
+      status: 'success',
+      message: 'Sesión cerrada exitosamente',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
