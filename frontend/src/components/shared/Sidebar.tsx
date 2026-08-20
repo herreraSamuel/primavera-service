@@ -8,12 +8,12 @@ import { LayoutDashboard, Users, Banknote, BarChart3, Receipt, FileText } from "
 import { authService } from "@/services/auth.service";
 
 const navigationItems = [
-    { name: "Inicio", href: "/", icon: LayoutDashboard },
-    { name: "Clientes", href: "/clients", icon: Users },
-    { name: "Ventas", href: "/ventas", icon: Banknote },
-    { name: "Ganancias", href: "/ganancias", icon: BarChart3 },
-    { name: "Gastos", href: "/gastos", icon: Receipt },
-    { name: "Edo. Resultados", href: "/estado-resultados", icon: FileText },
+    { name: "Inicio", href: "/", icon: LayoutDashboard, roles: ["ADMIN", "VENDEDOR"] },
+    { name: "Clientes", href: "/clients", icon: Users, roles: ["ADMIN", "VENDEDOR"] },
+    { name: "Ventas", href: "/ventas", icon: Banknote, roles: ["ADMIN", "VENDEDOR"] },
+    { name: "Ganancias", href: "/ganancias", icon: BarChart3, roles: ["ADMIN"] },
+    { name: "Gastos", href: "/gastos", icon: Receipt, roles: ["ADMIN"] },
+    { name: "Edo. Resultados", href: "/estado-resultados", icon: FileText, roles: ["ADMIN"] },
 ];
 
 export default function Sidebar() {
@@ -33,6 +33,10 @@ export default function Sidebar() {
         return name.slice(0, 2).toUpperCase();
     };
 
+    const filteredItems = navigationItems.filter(
+        (item) => !item.roles || (user?.rol && item.roles.includes(user.rol))
+    );
+
     return (
         <aside className="w-64 bg-sidebar text-sidebar-foreground flex flex-col h-screen border-r border-sidebar-border shadow-lg print:hidden">
             <div className="p-4 border-b border-sidebar-border/60 flex flex-col items-center justify-center shrink-0">
@@ -49,7 +53,7 @@ export default function Sidebar() {
             </div>
 
             <nav className="flex-1 p-4 space-y-2 mt-4 overflow-y-auto">
-                {navigationItems.map((item) => {
+                {filteredItems.map((item) => {
                     const Icon = item.icon;
                     const isActive = pathname === item.href;
 

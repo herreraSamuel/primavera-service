@@ -6,6 +6,7 @@ import { ExpensesTopCards } from "@/modules/gastos/components/ExpensesTopCards";
 import { ExpensesTabs } from "@/modules/gastos/components/ExpensesTabs";
 import { FixedExpensesView } from "@/modules/gastos/views/FixedExpensesView";
 import { VariableExpensesView } from "@/modules/gastos/views/VariableExpensesView";
+import RoleGuard from "@/components/shared/RoleGuard";
 
 export default function ExpensesPage() {
     const { 
@@ -54,47 +55,49 @@ export default function ExpensesPage() {
     const variableCount = data?.variableExpenses.length || 0;
 
     return (
-        <div className="space-y-6">
-            <ExpensesTopCards 
-                fixedConfirmed={summary.fixedConfirmed}
-                variables={summary.variables}
-                total={summary.total}
-                fixedPendingCount={summary.fixedPendingCount}
-                variableCount={variableCount}
-                month={month}
-                year={year}
-                setMonth={setMonth}
-                setYear={setYear}
-            />
+        <RoleGuard allowedRoles={["ADMIN"]}>
+            <div className="space-y-6">
+                <ExpensesTopCards 
+                    fixedConfirmed={summary.fixedConfirmed}
+                    variables={summary.variables}
+                    total={summary.total}
+                    fixedPendingCount={summary.fixedPendingCount}
+                    variableCount={variableCount}
+                    month={month}
+                    year={year}
+                    setMonth={setMonth}
+                    setYear={setYear}
+                />
 
-            <ExpensesTabs 
-                activeTab={activeTab} 
-                setActiveTab={setActiveTab} 
-                fixedPendingCount={summary.fixedPendingCount} 
-            />
+                <ExpensesTabs 
+                    activeTab={activeTab} 
+                    setActiveTab={setActiveTab} 
+                    fixedPendingCount={summary.fixedPendingCount} 
+                />
 
-            <div>
-                {activeTab === 'FIJOS' && (
-                    <FixedExpensesView 
-                        expenses={data?.fixedExpenses || []} 
-                        onConfirm={(id, monto) => confirmExpense({ catalogo_gasto_id: id, monto })}
-                        isConfirming={isConfirming}
-                        onUpdateAmount={(recordId, monto) => updateExpense({ id: recordId, monto })}
-                        isUpdating={isUpdating}
-                    />
-                )}
+                <div>
+                    {activeTab === 'FIJOS' && (
+                        <FixedExpensesView 
+                            expenses={data?.fixedExpenses || []} 
+                            onConfirm={(id, monto) => confirmExpense({ catalogo_gasto_id: id, monto })}
+                            isConfirming={isConfirming}
+                            onUpdateAmount={(recordId, monto) => updateExpense({ id: recordId, monto })}
+                            isUpdating={isUpdating}
+                        />
+                    )}
 
-                {activeTab === 'VARIABLES' && (
-                    <VariableExpensesView 
-                        expenses={data?.variableExpenses || []} 
-                        categories={data?.categories || []}
-                        onCreateVariable={createVariableExpense}
-                        isCreating={isCreatingVariable}
-                        onDeleteExpense={deleteExpense}
-                        isDeleting={isDeleting}
-                    />
-                )}
+                    {activeTab === 'VARIABLES' && (
+                        <VariableExpensesView 
+                            expenses={data?.variableExpenses || []} 
+                            categories={data?.categories || []}
+                            onCreateVariable={createVariableExpense}
+                            isCreating={isCreatingVariable}
+                            onDeleteExpense={deleteExpense}
+                            isDeleting={isDeleting}
+                        />
+                    )}
+                </div>
             </div>
-        </div>
+        </RoleGuard>
     );
 }
