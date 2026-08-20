@@ -56,4 +56,10 @@ export const authService = {
     isAuthenticated: (): boolean => {
         return !!authService.getUser();
     },
+
+    hasRole: (allowedRoles: string[]): boolean => {
+        const user = authService.getUser();
+        if (!user || !user.rol) return false;
+        return allowedRoles.includes(user.rol);
+    },
 };
