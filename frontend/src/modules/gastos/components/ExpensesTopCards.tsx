@@ -1,6 +1,5 @@
-import { formatCurrency, MONTHS } from "../useExpenses";
+import { formatCurrency } from "../useExpenses";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { ChevronLeft, ChevronRight, Calendar } from "lucide-react";
 
 interface ExpensesTopCardsProps {
     fixedConfirmed: number;
@@ -8,10 +7,20 @@ interface ExpensesTopCardsProps {
     total: number;
     fixedPendingCount: number;
     variableCount: number;
+    filterMode: "mes" | "rango";
+    setFilterMode: (mode: "mes" | "rango") => void;
     month: number;
-    year: number;
     setMonth: (month: number) => void;
+    year: number;
     setYear: (year: number) => void;
+    startDate: string;
+    setStartDate: (date: string) => void;
+    endDate: string;
+    setEndDate: (date: string) => void;
+    setPreset: (months: number) => void;
+    periodLabel: string;
+    MONTHS: string[];
+    YEARS: number[];
 }
 
 export function ExpensesTopCards({
@@ -20,54 +29,95 @@ export function ExpensesTopCards({
     total,
     fixedPendingCount,
     variableCount,
+    filterMode,
+    setFilterMode,
     month,
-    year,
     setMonth,
-    setYear
+    year,
+    setYear,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+    setPreset,
+    periodLabel,
+    MONTHS,
+    YEARS,
 }: ExpensesTopCardsProps) {
-    const monthName = MONTHS[month - 1];
-
-    const handlePrevMonth = () => {
-        if (month === 1) {
-            setMonth(12);
-            setYear(year - 1);
-        } else {
-            setMonth(month - 1);
-        }
-    };
-
-    const handleNextMonth = () => {
-        if (month === 12) {
-            setMonth(1);
-            setYear(year + 1);
-        } else {
-            setMonth(month + 1);
-        }
-    };
-
     return (
         <div className="space-y-6">
             <PageHeader
                 title="Gastos"
                 description="Control de gastos fijos y variables del negocio."
                 action={
-                    <div className="flex items-center border border-slate-200 rounded-lg bg-white px-2 py-1.5 shadow-sm">
-                        <button 
-                            onClick={handlePrevMonth} 
-                            className="p-1 hover:bg-slate-100 rounded-md transition-colors text-slate-500"
+                    <div className="flex items-center gap-3">
+                        <select
+                            value={filterMode}
+                            onChange={(e) => setFilterMode(e.target.value as "mes" | "rango")}
+                            className="bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-700 font-medium focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary cursor-pointer shadow-sm"
                         >
-                            <ChevronLeft className="w-4 h-4" />
-                        </button>
-                        <div className="mx-3 font-semibold text-slate-700 text-sm min-w-[110px] text-center">
-                            {monthName} {year}
+                            <option value="mes">Mensual</option>
+                            <option value="rango">Rango Personalizado</option>
+                        </select>
+
+                        {filterMode === "mes" ? (
+                            <div className="flex items-center gap-2">
+                                <select
+                                    value={month}
+                                    onChange={(e) => setMonth(Number(e.target.value))}
+                                    className="bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary cursor-pointer shadow-sm"
+                                >
+                                    {MONTHS.map((nombreMes, index) => (
+                                        <option key={index + 1} value={index + 1}>
+                                            {nombreMes}
+                                        </option>
+                                    ))}
+                                </select>
+                                <select
+                                    value={year}
+                                    onChange={(e) => setYear(Number(e.target.value))}
+                                    className="bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary cursor-pointer shadow-sm"
+                                >
+                                    {YEARS.map((y) => (
+                                        <option key={y} value={y}>
+                                            {y}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        ) : (
+                            <div className="flex items-center gap-2">
+                                <input
+                                    type="date"
+                                    value={startDate}
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                    className="bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary shadow-sm"
+                                />
+                                <span className="text-slate-400">—</span>
+                                <input
+                                    type="date"
+                                    value={endDate}
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                    className="bg-white border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary shadow-sm"
+                                />
+                            </div>
+                        )}
+
+                        <div className="flex rounded-lg border border-slate-200 overflow-hidden bg-white shadow-sm">
+                            {[
+                                { label: "3M", months: 3 },
+                                { label: "6M", months: 6 },
+                                { label: "1A", months: 12 },
+                            ].map(({ label, months: mCount }) => (
+                                <button
+                                    key={label}
+                                    onClick={() => setPreset(mCount)}
+                                    className="px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors border-r last:border-r-0 border-slate-200"
+                                >
+                                    {label}
+                                </button>
+                            ))}
                         </div>
-                        <Calendar className="w-4 h-4 text-slate-400 mr-2" />
-                        <button 
-                            onClick={handleNextMonth} 
-                            className="p-1 hover:bg-slate-100 rounded-md transition-colors text-slate-500 border-l border-slate-100 pl-2"
-                        >
-                            <ChevronRight className="w-4 h-4" />
-                        </button>
                     </div>
                 }
             />
@@ -98,7 +148,7 @@ export function ExpensesTopCards({
                         </div>
                     </div>
                     <div className="mt-3 text-slate-400 text-sm">
-                        {variableCount} registro(s) en {monthName.toLowerCase()} de {year}
+                        {variableCount} registro(s) en {periodLabel}
                     </div>
                 </div>
 
@@ -112,7 +162,7 @@ export function ExpensesTopCards({
                         </div>
                     </div>
                     <div className="mt-3 text-slate-400 text-sm">
-                        {monthName} de {year}
+                        {periodLabel}
                     </div>
                 </div>
             </div>

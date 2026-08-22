@@ -6,10 +6,29 @@ interface ApiResponse<T> {
     data: T;
 }
 
+export interface EstadoResultadosFilters {
+    month?: number;
+    year?: number;
+    startDate?: string;
+    endDate?: string;
+}
+
 export const estadoResultadosService = {
-    getResumen: async (month: number, year: number): Promise<EstadoResultadosData> => {
+    getResumen: async (filtersOrMonth?: EstadoResultadosFilters | number, maybeYear?: number): Promise<EstadoResultadosData> => {
+        let params: Record<string, any> = {};
+
+        if (typeof filtersOrMonth === "number") {
+            params.month = filtersOrMonth;
+            if (maybeYear) params.year = maybeYear;
+        } else if (filtersOrMonth) {
+            if (filtersOrMonth.month) params.month = filtersOrMonth.month;
+            if (filtersOrMonth.year) params.year = filtersOrMonth.year;
+            if (filtersOrMonth.startDate) params.startDate = filtersOrMonth.startDate;
+            if (filtersOrMonth.endDate) params.endDate = filtersOrMonth.endDate;
+        }
+
         const { data } = await api.get<ApiResponse<EstadoResultadosData>>(`/estado-resultados`, {
-            params: { month, year }
+            params
         });
         return data.data;
     },

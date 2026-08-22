@@ -133,9 +133,9 @@ export default class GastoEntity {
         });
     }
 
-    public static async getMonthlySummary(month: number, year: number) {
-        const startDate = new Date(year, month - 1, 1);
-        const endDate = new Date(year, month, 0, 23, 59, 59, 999);
+    public static async getSummary(startDateInput: string | Date, endDateInput: string | Date) {
+        const startDate = new Date(startDateInput);
+        const endDate = new Date(endDateInput);
 
         const fixedCatalog = await prisma.catalogo_gastos.findMany({
             where: {
@@ -220,5 +220,11 @@ export default class GastoEntity {
             variableExpenses: variableRecords,
             categories
         };
+    }
+
+    public static async getMonthlySummary(month: number, year: number) {
+        const startDate = new Date(year, month - 1, 1);
+        const endDate = new Date(year, month, 0, 23, 59, 59, 999);
+        return this.getSummary(startDate, endDate);
     }
 }

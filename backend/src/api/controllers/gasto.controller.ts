@@ -96,24 +96,45 @@ export default class GastoController {
 
     public static async getMonthlySummary(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
-            const monthStr = req.query.month as string;
-            const yearStr = req.query.year as string;
+            let { startDate, endDate, month, year, mes, anio } = req.query as {
+                startDate?: string;
+                endDate?: string;
+                month?: string;
+                year?: string;
+                mes?: string;
+                anio?: string;
+            };
 
-            if (!monthStr || !yearStr) {
-                throw new BadRequest('Month and year parameters are required');
+            const m = month || mes;
+            const y = year || anio;
+
+            if (m && y) {
+                const monthNum = parseInt(m);
+                const yearNum = parseInt(y);
+
+                if (isNaN(monthNum) || isNaN(yearNum) || monthNum < 1 || monthNum > 12) {
+                    throw new BadRequest('Invalid month or year parameter');
+                }
+
+                startDate = new Date(yearNum, monthNum - 1, 1).toISOString();
+                endDate = new Date(yearNum, monthNum, 0, 23, 59, 59, 999).toISOString();
+            } else if (startDate && endDate) {
+                if (!endDate.includes('T')) {
+                    endDate = `${endDate}T23:59:59.999Z`;
+                }
+                if (!startDate.includes('T')) {
+                    startDate = `${startDate}T00:00:00.000Z`;
+                }
+            } else {
+                const now = new Date();
+                startDate = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+                endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999).toISOString();
             }
 
-            const month = parseInt(monthStr);
-            const year = parseInt(yearStr);
-
-            if (isNaN(month) || isNaN(year) || month < 1 || month > 12) {
-                throw new BadRequest('Invalid month or year parameter');
-            }
-
-            const summary = await GastoEntity.getMonthlySummary(month, year);
+            const summary = await GastoEntity.getSummary(startDate, endDate);
 
             res.status(200).json({
-                message: 'Monthly expense summary retrieved successfully',
+                message: 'Expense summary retrieved successfully',
                 data: summary
             });
         } catch (error) {
