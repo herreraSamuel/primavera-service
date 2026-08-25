@@ -50,8 +50,22 @@ export const useExpenses = () => {
     });
 
     const confirmExpenseMutation = useMutation({
-        mutationFn: ({ catalogo_gasto_id, monto }: { catalogo_gasto_id: number; monto: number }) => 
-            expenseService.confirmFixedExpense(catalogo_gasto_id, monto),
+        mutationFn: ({ catalogo_gasto_id, monto }: { catalogo_gasto_id: number; monto: number }) => {
+            let targetDate = new Date();
+            if (filterMode === "mes") {
+                const isCurrentMonth = month === now.getMonth() + 1 && year === now.getFullYear();
+                if (!isCurrentMonth) {
+                    targetDate = new Date(year, month - 1, 15, 12, 0, 0);
+                }
+            } else {
+                const start = new Date(startDate + "T12:00:00");
+                const end = new Date(endDate + "T12:00:00");
+                if (now < start || now > end) {
+                    targetDate = new Date(start.getTime() + (end.getTime() - start.getTime()) / 2);
+                }
+            }
+            return expenseService.confirmFixedExpense(catalogo_gasto_id, monto, targetDate.toISOString());
+        },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["expenses", "summary"] });
         }

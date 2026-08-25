@@ -40,11 +40,11 @@ export const expenseService = {
         return data.data;
     },
 
-    confirmFixedExpense: async (catalogo_gasto_id: number, monto: number): Promise<void> => {
+    confirmFixedExpense: async (catalogo_gasto_id: number, monto: number, fecha: string): Promise<void> => {
         await api.post(`/gastos`, {
             catalogo_gasto_id,
             monto,
-            fecha: new Date().toISOString()
+            fecha
         });
     },
 
