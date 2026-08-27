@@ -46,7 +46,7 @@ export function VentaFormModal({ isOpen, onClose, ventaToEdit }: VentaFormModalP
         }
     });
 
-    const [selectedClientOption, setSelectedClientOption] = useState<{value: string, label: string} | null>(null);
+    const [selectedClientOption, setSelectedClientOption] = useState<{ value: string, label: string } | null>(null);
 
     useEffect(() => {
         if (isOpen) {
@@ -62,7 +62,7 @@ export function VentaFormModal({ isOpen, onClose, ventaToEdit }: VentaFormModalP
                     comision_operador: ventaToEdit.comision_operador ?? null,
                     metodo_pago: ventaToEdit.metodo_pago,
                 });
-                
+
                 if (ventaToEdit.clientes) {
                     setSelectedClientOption({
                         value: ventaToEdit.cliente_id.toString(),
@@ -209,9 +209,9 @@ export function VentaFormModal({ isOpen, onClose, ventaToEdit }: VentaFormModalP
                                     defaultOptions
                                     loadOptions={loadOptions}
                                     value={
-                                        field.value 
-                                            ? selectedClientOption 
-                                                ? selectedClientOption 
+                                        field.value
+                                            ? selectedClientOption
+                                                ? selectedClientOption
                                                 : { value: field.value.toString(), label: "Cliente seleccionado" }
                                             : null
                                     }
@@ -307,17 +307,17 @@ export function VentaFormModal({ isOpen, onClose, ventaToEdit }: VentaFormModalP
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 pt-4">
-                        <Button 
-                            type="button" 
-                            variant="outline" 
-                            onClick={onClose} 
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={onClose}
                             disabled={isPending}
                             className="h-12 rounded-xl border-slate-200 text-slate-700 font-semibold hover:bg-slate-50"
                         >
                             Cancelar
                         </Button>
-                        <Button 
-                            type="submit" 
+                        <Button
+                            type="submit"
                             disabled={isPending}
                             className="h-12 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-sm"
                         >
