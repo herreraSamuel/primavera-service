@@ -18,3 +18,5 @@ npm-debug.log*
 .vscode/
 .idea/
 node_modules
+
+backend/scripts-migration/
