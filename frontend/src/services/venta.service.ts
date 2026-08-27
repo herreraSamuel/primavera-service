@@ -27,8 +27,8 @@ export const ventasService = {
         if (search) {
             url += `&search=${encodeURIComponent(search)}`;
         }
-        const { data } = await api.get<ApiResponse<PaginatedResponse<Venta>>>(url);
-        return data.data;
+        const { data } = await api.get<PaginatedResponse<Venta>>(url);
+        return data;
     },
 
     getById: async (id: number | string): Promise<Venta> => {

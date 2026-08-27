@@ -13,10 +13,20 @@ export default function ExpensesPage() {
         data, 
         isLoading, 
         isError, 
+        filterMode,
+        setFilterMode,
         month, 
         setMonth, 
         year, 
         setYear,
+        startDate,
+        setStartDate,
+        endDate,
+        setEndDate,
+        setPreset,
+        periodLabel,
+        MONTHS,
+        YEARS,
         confirmExpense,
         isConfirming,
         createVariableExpense,
@@ -63,10 +73,20 @@ export default function ExpensesPage() {
                     total={summary.total}
                     fixedPendingCount={summary.fixedPendingCount}
                     variableCount={variableCount}
+                    filterMode={filterMode}
+                    setFilterMode={setFilterMode}
                     month={month}
                     year={year}
                     setMonth={setMonth}
                     setYear={setYear}
+                    startDate={startDate}
+                    setStartDate={setStartDate}
+                    endDate={endDate}
+                    setEndDate={setEndDate}
+                    setPreset={setPreset}
+                    periodLabel={periodLabel}
+                    MONTHS={MONTHS}
+                    YEARS={YEARS}
                 />
 
                 <ExpensesTabs 

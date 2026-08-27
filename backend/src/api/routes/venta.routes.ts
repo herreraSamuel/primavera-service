@@ -2,10 +2,9 @@ import { Router } from 'express';
 import VentaController from '../controllers/venta.controller.js';
 import { validateBody } from '../middlewares/validate.middleware.js';
 import { requireRole } from '../middlewares/role.middleware.js';
-import { ventaSchema } from '@agency/shared';
+import { ventaSchema, updateVentaSchema } from '@agency/shared';
 
 const createVentaSchema = ventaSchema;
-const updateVentaSchema = ventaSchema.partial();
 
 const router = Router({ strict: true });
 

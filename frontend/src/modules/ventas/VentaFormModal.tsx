@@ -1,5 +1,5 @@
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
+import AsyncSelect from "react-select/async";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircleIcon, Loader2Icon } from "lucide-react";
 import {
@@ -14,6 +14,8 @@ import { FormInput } from "@/components/ui/FormInput";
 import { useVentas } from "./useVentas";
 import { ApiError } from "@/lib/api";
 import { ventaSchema, type Venta, type CreateVentaDTO, type VentaFormValues } from "@agency/shared";
+import { clientsService } from "@/services/client.service";
+import { useEffect, useState } from "react";
 
 interface VentaFormModalProps {
     isOpen: boolean;
@@ -29,6 +31,7 @@ export function VentaFormModal({ isOpen, onClose, ventaToEdit }: VentaFormModalP
         handleSubmit,
         reset,
         setError,
+        control,
         formState: { errors },
     } = useForm<VentaFormValues>({
         resolver: zodResolver(ventaSchema),
@@ -40,8 +43,10 @@ export function VentaFormModal({ isOpen, onClose, ventaToEdit }: VentaFormModalP
             monto_neto: 0,
             comision_operador: null,
             metodo_pago: "EFECTIVO",
-        },
+        }
     });
+
+    const [selectedClientOption, setSelectedClientOption] = useState<{ value: string, label: string } | null>(null);
 
     useEffect(() => {
         if (isOpen) {
@@ -57,6 +62,15 @@ export function VentaFormModal({ isOpen, onClose, ventaToEdit }: VentaFormModalP
                     comision_operador: ventaToEdit.comision_operador ?? null,
                     metodo_pago: ventaToEdit.metodo_pago,
                 });
+
+                if (ventaToEdit.clientes) {
+                    setSelectedClientOption({
+                        value: ventaToEdit.cliente_id.toString(),
+                        label: `${ventaToEdit.clientes.primer_nombre} ${ventaToEdit.clientes.primer_apellido}`
+                    });
+                } else {
+                    setSelectedClientOption({ value: ventaToEdit.cliente_id.toString(), label: "Cliente Seleccionado" });
+                }
             } else {
                 reset({
                     numero_recibo: "",
@@ -67,6 +81,7 @@ export function VentaFormModal({ isOpen, onClose, ventaToEdit }: VentaFormModalP
                     comision_operador: null,
                     metodo_pago: "EFECTIVO",
                 });
+                setSelectedClientOption(null);
             }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -124,6 +139,22 @@ export function VentaFormModal({ isOpen, onClose, ventaToEdit }: VentaFormModalP
         }
     };
 
+    const loadOptions = async (inputValue: string) => {
+        try {
+            const response = await clientsService.getAll(1, 50, inputValue);
+            return response.data.map(client => {
+                const docText = client.documento_identidad ? `(CUI: ${client.documento_identidad})` : client.nit ? `(NIT: ${client.nit})` : '';
+                return {
+                    value: client.id.toString(),
+                    label: `${client.primer_nombre} ${client.segundo_nombre || ''} ${client.primer_apellido} ${client.segundo_apellido || ''} ${docText}`.replace(/\s+/g, ' ').trim()
+                };
+            });
+        } catch (error) {
+            console.error("Error loading clients:", error);
+            return [];
+        }
+    };
+
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && !isPending && onClose()}>
             <DialogContent className="sm:max-w-[700px] p-8 sm:rounded-2xl border-0 shadow-2xl" showCloseButton={false}>
@@ -166,24 +197,57 @@ export function VentaFormModal({ isOpen, onClose, ventaToEdit }: VentaFormModalP
 
                     <div className="space-y-2">
                         <Label htmlFor="cliente_id" className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Cliente <span className="text-red-500">*</span></Label>
-                        <select
-                            id="cliente_id"
-                            {...register("cliente_id")}
-                            aria-invalid={!!errors.cliente_id}
-                            disabled={isPending || clientsQuery.isLoading}
-                            className="bg-white h-11 rounded-xl border border-slate-200 px-3 w-full outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 text-slate-700 text-sm shadow-sm transition-all"
-                        >
-                            <option value="">Selecciona un cliente</option>
-                            {clientsQuery.isLoading ? (
-                                <option value="" disabled>Cargando clientes...</option>
-                            ) : (
-                                clientsQuery.data?.data?.map((client) => (
-                                    <option key={client.id} value={client.id}>
-                                        {client.primer_nombre} {client.segundo_nombre || ''} {client.primer_apellido} {client.segundo_apellido || ''} ({client.documento_identidad || client.nit || 'Sin doc'})
-                                    </option>
-                                ))
+                        <Controller
+                            name="cliente_id"
+                            control={control}
+                            render={({ field }) => (
+                                <AsyncSelect
+                                    {...field}
+                                    id="cliente_id"
+                                    isDisabled={isPending}
+                                    cacheOptions
+                                    defaultOptions
+                                    loadOptions={loadOptions}
+                                    value={
+                                        field.value
+                                            ? selectedClientOption
+                                                ? selectedClientOption
+                                                : { value: field.value.toString(), label: "Cliente seleccionado" }
+                                            : null
+                                    }
+                                    onChange={(option: any) => {
+                                        field.onChange(option?.value || "");
+                                        setSelectedClientOption(option || null);
+                                    }}
+                                    placeholder="Buscar o seleccionar cliente..."
+                                    noOptionsMessage={({ inputValue }) => inputValue ? "No se encontraron clientes" : "Escribe para buscar..."}
+                                    loadingMessage={() => "Buscando..."}
+                                    classNames={{
+                                        control: (state) => `h-11 rounded-xl border ${state.isFocused ? 'border-primary ring-2 ring-primary/20' : 'border-slate-200'} bg-white text-sm shadow-sm transition-all hover:border-slate-300`,
+                                        menu: () => "rounded-xl border border-slate-200 shadow-lg mt-1 bg-white text-sm z-50",
+                                        option: (state) => `px-3 py-2 cursor-pointer ${state.isFocused ? 'bg-slate-100' : ''} ${state.isSelected ? 'bg-primary/10 text-primary font-medium' : 'text-slate-700'}`,
+                                        placeholder: () => "text-slate-400",
+                                        singleValue: () => "text-slate-700",
+                                        input: () => "text-slate-700",
+                                        indicatorSeparator: () => "hidden",
+                                    }}
+                                    styles={{
+                                        control: (base) => ({
+                                            ...base,
+                                            border: 0,
+                                            boxShadow: 'none',
+                                            '&:hover': { border: 0 },
+                                        }),
+                                        input: (base) => ({
+                                            ...base,
+                                            'input:focus': {
+                                                boxShadow: 'none',
+                                            }
+                                        })
+                                    }}
+                                />
                             )}
-                        </select>
+                        />
                         {errors.cliente_id && (
                             <p className="text-[11px] font-medium text-[#FF6347]">{errors.cliente_id.message}</p>
                         )}
@@ -243,17 +307,17 @@ export function VentaFormModal({ isOpen, onClose, ventaToEdit }: VentaFormModalP
                     </div>
 
                     <div className="grid grid-cols-2 gap-4 pt-4">
-                        <Button 
-                            type="button" 
-                            variant="outline" 
-                            onClick={onClose} 
+                        <Button
+                            type="button"
+                            variant="outline"
+                            onClick={onClose}
                             disabled={isPending}
                             className="h-12 rounded-xl border-slate-200 text-slate-700 font-semibold hover:bg-slate-50"
                         >
                             Cancelar
                         </Button>
-                        <Button 
-                            type="submit" 
+                        <Button
+                            type="submit"
                             disabled={isPending}
                             className="h-12 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-sm"
                         >

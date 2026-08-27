@@ -9,11 +9,18 @@ export default class VentaController {
             const page = parseInt(req.query.page as string) || 1;
             const limit = parseInt(req.query.limit as string) || 10;
             const search = req.query.search as string | undefined;
-            const ventas = await VentaEntity.findAll(page, limit, search);
+            const { data, total } = await VentaEntity.findAll(page, limit, search);
+            const totalPages = Math.ceil(total / limit);
 
             res.status(200).json({
                 message: 'Sales retrieved successfully',
-                data: ventas
+                data,
+                meta: {
+                    total,
+                    page,
+                    limit,
+                    totalPages
+                }
             });
         } catch (error) {
             next(error);

@@ -2,9 +2,19 @@ import { prisma } from '../database.js';
 
 export default class EstadoResultadosEntity {
 
-    public static async getResumen(month: number, year: number) {
-        const startDate = new Date(year, month - 1, 1);
-        const endDate = new Date(year, month, 0, 23, 59, 59, 999);
+    public static async getResumen(startDateInput: string | Date | number, endDateInput?: string | Date | number) {
+        let startDate: Date;
+        let endDate: Date;
+
+        if (typeof startDateInput === 'number' && typeof endDateInput === 'number') {
+            const month = startDateInput;
+            const year = endDateInput;
+            startDate = new Date(year, month - 1, 1);
+            endDate = new Date(year, month, 0, 23, 59, 59, 999);
+        } else {
+            startDate = new Date(startDateInput);
+            endDate = endDateInput ? new Date(endDateInput) : new Date();
+        }
 
         const ventasWhere = {
             deleted_at: null,
