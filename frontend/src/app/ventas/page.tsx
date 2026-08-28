@@ -5,9 +5,11 @@ import { Plus } from "lucide-react";
 import { useState } from "react";
 import { VentaFormModal } from "@/modules/ventas/VentaFormModal";
 import { PageHeader } from "@/components/ui/PageHeader";
+import type { Venta } from "@agency/shared";
 
 export default function VentasPage() {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [newlyCreatedVenta, setNewlyCreatedVenta] = useState<Venta | null>(null);
 
     return (
         <div className="space-y-6">
@@ -25,11 +27,15 @@ export default function VentasPage() {
                 }
             />
 
-            <VentasTable />
+            <VentasTable 
+                newlyCreatedVenta={newlyCreatedVenta}
+                onClearNewlyCreated={() => setNewlyCreatedVenta(null)}
+            />
 
             <VentaFormModal 
                 isOpen={isCreateModalOpen}
                 onClose={() => setIsCreateModalOpen(false)}
+                onSuccess={(venta) => setNewlyCreatedVenta(venta)}
             />
         </div>
     );
