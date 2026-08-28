@@ -27,7 +27,7 @@ export interface DetalleVenta {
     origen_pais_id: number | null;
     destino_pais_id: number | null;
     cantidad_pasajeros: number;
-    precio_boletos: number;
+    precio_unitario: number;
     proveedor_id: number | null;
     aerolinea_id: number | null;
     detalles_especificos: string | null;
@@ -47,7 +47,7 @@ export type CreateDetalleVentaDTO = {
     origen_pais_id?: number | null;
     destino_pais_id?: number | null;
     cantidad_pasajeros?: number;
-    precio_boletos?: number;
+    precio_unitario?: number;
     proveedor_id?: number | null;
     aerolinea_id?: number | null;
     detalles_especificos?: string | null;

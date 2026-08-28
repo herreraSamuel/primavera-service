@@ -50,7 +50,7 @@ model detalles_venta {
   origen_pais_id       Int?
   destino_pais_id      Int?
   cantidad_pasajeros   Int                     @default(1)
-  precio_boletos       Decimal                 @default(0.00) @db.Decimal(12, 2)
+  precio_unitario      Decimal                 @default(0.00) @db.Decimal(12, 2)
   proveedor_id         Int?
   aerolinea_id         Int?
   detalles_especificos String?

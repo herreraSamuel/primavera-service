@@ -9,7 +9,7 @@ interface DetalleFormValues {
     origen_pais_id: string;
     destino_pais_id: string;
     cantidad_pasajeros: number;
-    precio_boletos: number;
+    precio_unitario: number;
     aerolinea_id: string;
     proveedor_id: string;
     detalles_especificos: string;
@@ -50,7 +50,7 @@ export function DetalleVentaWizard({
             origen_pais_id: "",
             destino_pais_id: "",
             cantidad_pasajeros: 1,
-            precio_boletos: 0,
+            precio_unitario: 0,
             aerolinea_id: "",
             proveedor_id: "",
             detalles_especificos: "",
@@ -65,7 +65,7 @@ export function DetalleVentaWizard({
             origen_pais_id: formData.origen_pais_id ? Number(formData.origen_pais_id) : null,
             destino_pais_id: formData.destino_pais_id ? Number(formData.destino_pais_id) : null,
             cantidad_pasajeros: Number(formData.cantidad_pasajeros) || 1,
-            precio_boletos: Number(formData.precio_boletos) || 0,
+            precio_unitario: Number(formData.precio_unitario) || 0,
             aerolinea_id: formData.aerolinea_id ? Number(formData.aerolinea_id) : null,
             proveedor_id: formData.proveedor_id ? Number(formData.proveedor_id) : null,
             detalles_especificos: formData.detalles_especificos || null,
@@ -173,8 +173,8 @@ export function DetalleVentaWizard({
                                 <input type="number" min={1} {...register("cantidad_pasajeros")} className={inputClasses} />
                             </div>
                             <div>
-                                <label className={labelClasses}>Precio boletos</label>
-                                <input type="number" min={0} step="0.01" {...register("precio_boletos")} className={inputClasses} />
+                                <label className={labelClasses}>Precio unitario</label>
+                                <input type="number" min={0} step="0.01" {...register("precio_unitario")} className={inputClasses} />
                             </div>
                             <div>
                                 <label className={labelClasses}>Aerolínea</label>

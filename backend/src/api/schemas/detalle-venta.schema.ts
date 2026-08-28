@@ -38,9 +38,9 @@ export const createDetalleVentaSchema = z.object({
         .positive('Passenger count must be at least 1')
         .optional(),
 
-    precio_boletos: z
-        .number({ message: 'Ticket price must be a number' })
-        .nonnegative('Ticket price must be a positive value or zero')
+    precio_unitario: z
+        .number({ message: 'Unit price must be a number' })
+        .nonnegative('Unit price must be a positive value or zero')
         .optional(),
 
     proveedor_id: z

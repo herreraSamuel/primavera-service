@@ -119,7 +119,7 @@ export function VentaDetailsModal({
                                 )}
                             </div>
                             <div className="flex items-center gap-2">
-                                <p className="font-bold text-slate-800 text-base">Q{Number(detalle.precio_boletos).toFixed(2)}</p>
+                                <p className="font-bold text-slate-800 text-base">Q{Number(detalle.precio_unitario).toFixed(2)}</p>
                                 <button
                                     onClick={() => setEditingDetalle(detalle)}
                                     className="opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 hover:text-[#0367A6] hover:bg-blue-50/50 rounded-md transition-all"
