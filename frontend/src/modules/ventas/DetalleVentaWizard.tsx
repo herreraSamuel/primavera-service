@@ -277,6 +277,15 @@ export function DetalleVentaWizard({
                     className={inputClasses}
                 />
             </div>
+            <div className={mode === "ALL" ? "col-span-2 md:col-span-1" : "col-span-2"}>
+                <label className={labelClasses}>Cantidad de pasajeros</label>
+                <input
+                    type="number"
+                    min={1}
+                    {...formObj.register("cantidad_pasajeros")}
+                    className={inputClasses}
+                />
+            </div>
         </>
     );
 
@@ -289,15 +298,6 @@ export function DetalleVentaWizard({
                     destinoPais: "País destino global",
                     destinoCiudad: "Ciudad destino global"
                 })}
-                <div className="col-span-2 md:col-span-1">
-                    <label className={labelClasses}>Cantidad de pasajeros</label>
-                    <input
-                        type="number"
-                        min={1}
-                        {...globalForm.register("cantidad_pasajeros")}
-                        className={inputClasses}
-                    />
-                </div>
             </div>
 
             <div className="flex gap-4">
@@ -335,9 +335,9 @@ export function DetalleVentaWizard({
                 <div className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 flex items-center justify-between gap-3">
                     <div className="text-xs text-slate-600 truncate flex-1">
                         {isEstacionario ? (
-                            <>📍 Ubicación: <span className="font-semibold">{destinoText}</span></>
+                            <>📍 Ubicación: <span className="font-semibold">{destinoText}</span> <span className="text-slate-400 mx-1">·</span> {serviceForm.watch("cantidad_pasajeros")} pax</>
                         ) : (
-                            <>📍 Origen: <span className="font-semibold">{origenText}</span> <span className="text-slate-400 mx-1">→</span> Destino: <span className="font-semibold">{destinoText}</span></>
+                            <>📍 Origen: <span className="font-semibold">{origenText}</span> <span className="text-slate-400 mx-1">→</span> Destino: <span className="font-semibold">{destinoText}</span> <span className="text-slate-400 mx-1">·</span> {serviceForm.watch("cantidad_pasajeros")} pax</>
                         )}
                     </div>
                     <button
@@ -345,7 +345,7 @@ export function DetalleVentaWizard({
                         onClick={() => setShowOverride(!showOverride)}
                         className="flex-shrink-0 flex items-center gap-1 text-[11px] font-bold text-[#0367A6] hover:text-[#025185] transition-colors"
                     >
-                        {showOverride ? "Ocultar" : "Editar ubicación específica"}
+                        {showOverride ? "Ocultar" : "Editar detalles específicos"}
                         <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${showOverride ? "rotate-180" : ""}`} />
                     </button>
                 </div>
@@ -378,7 +378,7 @@ export function DetalleVentaWizard({
                     )
                 )}
 
-                <div className="grid grid-cols-3 gap-3 mb-4">
+                <div className={`grid ${currentService.id === 11 || (currentService.id !== 4 && currentService.id !== 12) ? "grid-cols-2" : "grid-cols-1"} gap-3 mb-4`}>
                     <div>
                         <label className={labelClasses}>Precio unitario</label>
                         <input
@@ -386,15 +386,6 @@ export function DetalleVentaWizard({
                             min={0}
                             step="0.01"
                             {...serviceForm.register("precio_unitario")}
-                            className={inputClasses}
-                        />
-                    </div>
-                    <div>
-                        <label className={labelClasses}>Pasajeros</label>
-                        <input
-                            type="number"
-                            min={1}
-                            {...serviceForm.register("cantidad_pasajeros")}
                             className={inputClasses}
                         />
                     </div>
@@ -421,9 +412,9 @@ export function DetalleVentaWizard({
                     ) : null}
                 </div>
 
-                {metaFields.length > 0 && (
+                {metaFields.filter(f => f.key !== "aerolinea").length > 0 && (
                     <div className="grid grid-cols-2 gap-3 mb-4">
-                        {metaFields.map(renderMetadataField)}
+                        {metaFields.filter(f => f.key !== "aerolinea").map(renderMetadataField)}
                     </div>
                 )}
 

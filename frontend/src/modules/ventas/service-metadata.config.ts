@@ -7,6 +7,9 @@ export interface MetadataFieldConfig {
 }
 
 export const SERVICE_METADATA_CONFIG: Record<number, MetadataFieldConfig[]> = {
+    11: [
+        { key: "aerolinea", label: "Aerolínea", type: "select", options: [] },
+    ],
     12: [
         {
             key: "pais_tramite",
