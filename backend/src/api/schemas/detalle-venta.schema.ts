@@ -73,7 +73,7 @@ export const createDetalleVentaSchema = z.object({
         .nullable(),
 
     metadata_servicio: z
-        .record(z.unknown())
+        .record(z.string(), z.unknown())
         .optional()
         .nullable()
 }).strict();
