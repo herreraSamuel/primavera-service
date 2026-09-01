@@ -48,12 +48,15 @@ model detalles_venta {
   servicio_id          Int?
   tipo_viaje           tipo_viaje_opcion?
   origen_pais_id       Int?
+  ciudad_origen          String?                 @db.VarChar(150)
   destino_pais_id      Int?
+  ciudad_destino       String?                 @db.VarChar(150)
   cantidad_pasajeros   Int                     @default(1)
-  precio_boletos       Decimal                 @default(0.00) @db.Decimal(12, 2)
+  precio_unitario      Decimal                 @default(0.00) @db.Decimal(12, 2)
   proveedor_id         Int?
   aerolinea_id         Int?
   detalles_especificos String?
+  metadata_servicio    Json?
   created_at           DateTime?               @default(now()) @db.Timestamptz(6)
   updated_at           DateTime?               @updatedAt @db.Timestamptz(6)
   aerolineas           aerolineas?             @relation(fields: [aerolinea_id], references: [id], onDelete: NoAction, onUpdate: NoAction)

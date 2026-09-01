@@ -9,7 +9,12 @@ import { VentaDetailsModal } from "./VentaDetailsModal";
 import type { Venta } from "@agency/shared";
 import { DataTable, type Column } from "@/components/ui/DataTable";
 
-export default function VentasTable() {
+interface VentasTableProps {
+    newlyCreatedVenta?: Venta | null;
+    onClearNewlyCreated?: () => void;
+}
+
+export default function VentasTable({ newlyCreatedVenta, onClearNewlyCreated }: VentasTableProps = {}) {
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [search, setSearch] = useState("");
@@ -26,6 +31,13 @@ export default function VentasTable() {
     const [deletingVentaId, setDeletingVentaId] = useState<string | number | null>(null);
     const [editingVenta, setEditingVenta] = useState<Venta | null>(null);
     const [viewingVenta, setViewingVenta] = useState<Venta | null>(null);
+
+    useEffect(() => {
+        if (newlyCreatedVenta) {
+            setViewingVenta(newlyCreatedVenta);
+            if (onClearNewlyCreated) onClearNewlyCreated();
+        }
+    }, [newlyCreatedVenta, onClearNewlyCreated]);
 
     const ventas = ventasQuery.data?.data || [];
     const meta = ventasQuery.data?.meta;

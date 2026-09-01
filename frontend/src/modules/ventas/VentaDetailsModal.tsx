@@ -97,9 +97,21 @@ export function VentaDetailsModal({
         const serviceName = detalle.servicios?.nombre || "Servicio";
         const Icon = getServiceIcon(serviceName);
         const colors = getServiceColors(serviceName);
-        const origen = detalle.pais_origen?.nombre || "—";
-        const destino = detalle.pais_destino?.nombre || "—";
+        const origenNombre = detalle.pais_origen?.nombre;
+        const destinoNombre = detalle.pais_destino?.nombre;
+        let locationText = null;
+        if (origenNombre && destinoNombre) {
+            locationText = `${origenNombre} → ${destinoNombre}`;
+        } else if (destinoNombre) {
+            locationText = destinoNombre;
+        } else if (origenNombre) {
+            locationText = origenNombre;
+        }
+
         const tipoViaje = detalle.tipo_viaje === "SOLO_IDA" ? "Solo ida" : detalle.tipo_viaje === "IDA_Y_VUELTA" ? "Ida y vuelta" : null;
+        
+        const metadata = (detalle.metadata_servicio as Record<string, any>) || {};
+        const aerolineaName = metadata.aerolinea || detalle.aerolineas?.nombre;
 
         return (
             <div key={String(detalle.id)} className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden flex relative group hover:shadow-md transition-shadow">
@@ -119,7 +131,7 @@ export function VentaDetailsModal({
                                 )}
                             </div>
                             <div className="flex items-center gap-2">
-                                <p className="font-bold text-slate-800 text-base">Q{Number(detalle.precio_boletos).toFixed(2)}</p>
+                                <p className="font-bold text-slate-800 text-base">Q{Number(detalle.precio_unitario).toFixed(2)}</p>
                                 <button
                                     onClick={() => setEditingDetalle(detalle)}
                                     className="opacity-0 group-hover:opacity-100 p-1.5 text-slate-400 hover:text-[#0367A6] hover:bg-blue-50/50 rounded-md transition-all"
@@ -134,14 +146,14 @@ export function VentaDetailsModal({
                                 </button>
                             </div>
                         </div>
-                        <p className="text-sm text-slate-600 mb-4 font-medium">{origen} → {destino}</p>
+                        {locationText && <p className="text-sm text-slate-600 mb-4 font-medium">{locationText}</p>}
                         <div className="flex items-center gap-5 text-xs text-slate-500 font-medium">
                             <span className="flex items-center gap-1.5">
                                 <Users className="w-3.5 h-3.5 text-slate-400" /> {detalle.cantidad_pasajeros} pax
                             </span>
-                            {detalle.aerolineas && (
+                            {aerolineaName && (
                                 <span className="flex items-center gap-1.5">
-                                    <Plane className="w-3.5 h-3.5 text-slate-400" /> {detalle.aerolineas.nombre}
+                                    <Plane className="w-3.5 h-3.5 text-slate-400" /> {aerolineaName}
                                 </span>
                             )}
                             {detalle.operadores_proveedores && (

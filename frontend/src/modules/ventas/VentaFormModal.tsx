@@ -21,9 +21,10 @@ interface VentaFormModalProps {
     isOpen: boolean;
     onClose: () => void;
     ventaToEdit?: Venta | null;
+    onSuccess?: (venta: Venta) => void;
 }
 
-export function VentaFormModal({ isOpen, onClose, ventaToEdit }: VentaFormModalProps) {
+export function VentaFormModal({ isOpen, onClose, ventaToEdit, onSuccess: onSuccessProp }: VentaFormModalProps) {
     const { createVenta, updateVenta, clientsQuery } = useVentas();
 
     const {
@@ -130,9 +131,12 @@ export function VentaFormModal({ isOpen, onClose, ventaToEdit }: VentaFormModalP
             );
         } else {
             createVenta.mutate(cleanedData, {
-                onSuccess: () => {
+                onSuccess: (newVenta) => {
                     reset();
                     onClose();
+                    if (onSuccessProp) {
+                        onSuccessProp(newVenta);
+                    }
                 },
                 onError: handleMutationError,
             });
