@@ -60,6 +60,21 @@ export const createDetalleVentaSchema = z.object({
     detalles_especificos: z
         .string()
         .optional()
+        .nullable(),
+
+    ciudad_origen: z
+        .string()
+        .optional()
+        .nullable(),
+
+    ciudad_destino: z
+        .string()
+        .optional()
+        .nullable(),
+
+    metadata_servicio: z
+        .record(z.unknown())
+        .optional()
         .nullable()
 }).strict();
 
