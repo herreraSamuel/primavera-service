@@ -58,10 +58,12 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
       { expiresIn: '1h' }
     );
 
+    const isProduction = process.env.NODE_ENV === 'production';
+
     res.cookie('token', token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
       maxAge: 60 * 60 * 1000,
     });
 
@@ -81,10 +83,12 @@ export const login = async (req: Request, res: Response, next: NextFunction): Pr
 
 export const logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
+    const isProduction = process.env.NODE_ENV === 'production';
+
     res.clearCookie('token', {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: isProduction,
+      sameSite: isProduction ? 'none' : 'lax',
     });
 
     res.status(200).json({
