@@ -20,3 +20,10 @@ npm-debug.log*
 node_modules
 
 backend/scripts-migration/
+
+# Built files
+backend/dist/
+shared/**/*.js
+shared/**/*.js.map
+shared/**/*.d.ts
+shared/**/*.d.ts.map
