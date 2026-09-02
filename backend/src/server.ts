@@ -14,6 +14,7 @@ class Server {
   constructor() {
     this.app = express();
     this.port = process.env.PORT || 3000;
+    this.app.set('trust proxy', 1);
 
     this.middlewares();
     this.routes();
@@ -23,9 +24,17 @@ class Server {
   private middlewares(): void {
     this.app.use(helmet());
 
+    const authLimiter = rateLimit({
+      windowMs: 15 * 60 * 1000,
+      max: 10,
+      message: 'Demasiados intentos de inicio de sesión, intenta en 15 minutos.',
+    });
+
+    this.app.use('/api/auth/login', authLimiter);
+
     const limiter = rateLimit({
       windowMs: 15 * 60 * 1000,
-      max: 100,
+      max: 1000,
       message: 'Demasiadas peticiones desde esta IP, por favor intenta de nuevo en 15 minutos.',
     });
     this.app.use(limiter);
