@@ -23,10 +23,10 @@ appRouter.use('/ventas', requireRole(['ADMIN', 'VENDEDOR']), ventaRoutes);
 appRouter.use('/detalles-venta', requireRole(['ADMIN', 'VENDEDOR']), detalleVentaRoutes);
 
 appRouter.use('/departamentos', requireRole(['ADMIN']), departamentoRoutes);
-appRouter.use('/servicios', requireRole(['ADMIN']), serviciosRoutes);
-appRouter.use('/paises', requireRole(['ADMIN']), paisesRoutes);
-appRouter.use('/operadores', requireRole(['ADMIN']), operadoresRoutes);
-appRouter.use('/aerolineas', requireRole(['ADMIN']), aerolineasRoutes);
+appRouter.use('/servicios', requireRole(['ADMIN', 'VENDEDOR']), serviciosRoutes);
+appRouter.use('/paises', requireRole(['ADMIN', 'VENDEDOR']), paisesRoutes);
+appRouter.use('/operadores', requireRole(['ADMIN', 'VENDEDOR']), operadoresRoutes);
+appRouter.use('/aerolineas', requireRole(['ADMIN', 'VENDEDOR']), aerolineasRoutes);
 appRouter.use('/gastos', requireRole(['ADMIN']), gastoRoutes);
 appRouter.use('/estado-resultados', requireRole(['ADMIN']), estadoResultadosRoutes);
 
