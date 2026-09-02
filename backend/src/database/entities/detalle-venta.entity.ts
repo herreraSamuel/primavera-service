@@ -5,7 +5,6 @@ const DETALLE_INCLUDES = {
     servicios: true,
     pais_origen: true,
     pais_destino: true,
-    aerolineas: true,
     operadores_proveedores: true
 } as const;
 
