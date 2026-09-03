@@ -22,7 +22,7 @@ appRouter.use('/clients', requireRole(['ADMIN', 'VENDEDOR']), clientRoutes);
 appRouter.use('/ventas', requireRole(['ADMIN', 'VENDEDOR']), ventaRoutes);
 appRouter.use('/detalles-venta', requireRole(['ADMIN', 'VENDEDOR']), detalleVentaRoutes);
 
-appRouter.use('/departamentos', requireRole(['ADMIN']), departamentoRoutes);
+appRouter.use('/departamentos', requireRole(['ADMIN, 'VENDEDOR']), departamentoRoutes);
 appRouter.use('/servicios', requireRole(['ADMIN', 'VENDEDOR']), serviciosRoutes);
 appRouter.use('/paises', requireRole(['ADMIN', 'VENDEDOR']), paisesRoutes);
 appRouter.use('/operadores', requireRole(['ADMIN', 'VENDEDOR']), operadoresRoutes);
