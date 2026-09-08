@@ -47,7 +47,7 @@ export function ExpensesTopCards({
     return (
         <div className="space-y-6">
             <PageHeader
-                title="Gastos"
+                title={filterMode === 'mes' ? `Gastos de mes de ${MONTHS[month - 1]} del ${year}` : "Gastos"}
                 description="Control de gastos fijos y variables del negocio."
                 action={
                     <div className="flex items-center gap-3">
