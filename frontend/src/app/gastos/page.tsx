@@ -115,6 +115,8 @@ export default function ExpensesPage() {
                             isCreating={isCreatingVariable}
                             onDeleteExpense={deleteExpense}
                             isDeleting={isDeleting}
+                            selectedMonth={month}
+                            selectedYear={year}
                         />
                     )}
                 </div>
