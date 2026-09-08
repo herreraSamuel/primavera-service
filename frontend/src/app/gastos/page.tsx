@@ -103,6 +103,7 @@ export default function ExpensesPage() {
                             isConfirming={isConfirming}
                             onUpdateAmount={(recordId, monto) => updateExpense({ id: recordId, monto })}
                             isUpdating={isUpdating}
+                            monthName={filterMode === 'mes' ? MONTHS[month - 1] : periodLabel}
                         />
                     )}
 

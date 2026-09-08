@@ -1,7 +1,16 @@
 import { useState } from "react";
 import { formatCurrency } from "../useExpenses";
 import { FixedExpenseWithRecords } from "@/types/expense";
-import { Check, Edit2, X, Loader2 } from "lucide-react";
+import { Check, Edit2, X, Loader2, DollarSign } from "lucide-react";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 interface FixedExpensesViewProps {
     expenses: FixedExpenseWithRecords[];
@@ -9,6 +18,7 @@ interface FixedExpensesViewProps {
     isConfirming: boolean;
     onUpdateAmount: (recordId: string | number, monto: number) => void;
     isUpdating: boolean;
+    monthName: string;
 }
 
 function formatDate(dateStr: string): string {
@@ -23,7 +33,8 @@ export function FixedExpensesView({
     onConfirm, 
     isConfirming,
     onUpdateAmount,
-    isUpdating 
+    isUpdating,
+    monthName
 }: FixedExpensesViewProps) {
     const [editingState, setEditingState] = useState<{
         catalogId: number;
@@ -33,6 +44,8 @@ export function FixedExpensesView({
     } | null>(null);
 
     const [customPendingAmounts, setCustomPendingAmounts] = useState<Record<number, number>>({});
+    const [confirmingExpense, setConfirmingExpense] = useState<{ id: number, monto: number } | null>(null);
+
 
     const handleStartEditing = (catalogId: number, currentAmount: number, recordId?: string | number, isConfirmed: boolean = false) => {
         setEditingState({
@@ -59,6 +72,17 @@ export function FixedExpensesView({
         }
 
         setEditingState(null);
+    };
+
+    const handleConfirmClick = (id: number, monto: number) => {
+        setConfirmingExpense({ id, monto });
+    };
+
+    const confirmPayment = () => {
+        if (confirmingExpense) {
+            onConfirm(confirmingExpense.id, confirmingExpense.monto);
+            setConfirmingExpense(null);
+        }
     };
 
     return (
@@ -157,7 +181,7 @@ export function FixedExpensesView({
                                     </div>
                                 ) : (
                                     <button 
-                                        onClick={() => onConfirm(expense.id, currentAmount)}
+                                        onClick={() => handleConfirmClick(expense.id, currentAmount)}
                                         disabled={isConfirming}
                                         className="px-5 py-2 rounded-lg border-2 border-amber-500 text-amber-600 font-semibold text-sm hover:bg-amber-500 hover:text-slate-950 transition-all disabled:opacity-50 shadow-sm"
                                     >
@@ -175,6 +199,44 @@ export function FixedExpensesView({
                     <p className="text-slate-400 text-sm">No hay gastos fijos configurados en el catálogo.</p>
                 </div>
             )}
+
+            <Dialog open={!!confirmingExpense} onOpenChange={(open) => !open && !isConfirming && setConfirmingExpense(null)}>
+                <DialogContent className="sm:max-w-[420px] p-8 sm:rounded-3xl border-0 shadow-2xl flex flex-col items-center text-center" showCloseButton={false}>
+                    <div className="w-14 h-14 bg-emerald-50 text-emerald-600 rounded-full flex items-center justify-center mb-2">
+                        <DollarSign className="w-6 h-6 stroke-[2]" />
+                    </div>
+                    
+                    <DialogHeader className="flex flex-col items-center">
+                        <DialogTitle className="text-xl font-bold text-slate-900 mb-1">
+                            Confirmar Pago
+                        </DialogTitle>
+                        <DialogDescription className="text-[15px] text-slate-500">
+                            ¿Está seguro que desea registrar este gasto fijo para el mes de <strong className="text-slate-700">{monthName}</strong>?
+                        </DialogDescription>
+                    </DialogHeader>
+                    
+                    <DialogFooter className="mt-6 w-full grid grid-cols-2 gap-4">
+                        <Button 
+                            type="button"
+                            variant="outline" 
+                            onClick={() => setConfirmingExpense(null)} 
+                            disabled={isConfirming}
+                            className="h-12 rounded-xl text-slate-700 font-semibold border-slate-200 hover:bg-slate-50"
+                        >
+                            Cancelar
+                        </Button>
+                        <Button 
+                            type="button"
+                            onClick={confirmPayment} 
+                            disabled={isConfirming}
+                            className="h-12 rounded-xl font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm"
+                        >
+                            {isConfirming && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            {isConfirming ? "Confirmando..." : "Sí, registrar"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

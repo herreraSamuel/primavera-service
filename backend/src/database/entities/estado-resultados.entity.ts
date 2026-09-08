@@ -82,7 +82,7 @@ export default class EstadoResultadosEntity {
         const gananciaNetaVentas = totalVentasBrutas - costoServiciosNeto;
         const comisionOperadoresTotal = Number(ventasAgg._sum.comision_operador ?? 0);
         
-        const totalIngresosAgencia = gananciaNetaVentas + comisionOperadoresTotal;
+        const totalIngresosAgencia = gananciaNetaVentas;
 
         let gastosFijosTotal = 0;
         const detallesGastosFijos: { descripcion: string; monto: number }[] = [];
@@ -140,7 +140,7 @@ export default class EstadoResultadosEntity {
             });
         });
 
-        const totalGastosOperacionales = gastosFijosTotal + gastosVariablesTotal;
+        const totalGastosOperacionales = gastosFijosTotal + gastosVariablesTotal + comisionOperadoresTotal;
 
         const utilidadNeta = totalIngresosAgencia - totalGastosOperacionales;
 

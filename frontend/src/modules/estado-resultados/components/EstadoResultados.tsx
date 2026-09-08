@@ -183,8 +183,9 @@ export default function EstadoResultados() {
               className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden print:border-0 print:shadow-none"
               style={{ WebkitPrintColorAdjust: "exact", printColorAdjust: "exact" } as React.CSSProperties}
             >
-              <div className="hidden print:flex flex-col items-center justify-center pt-8 pb-6 w-full bg-white">
-                <div className="relative w-64 h-24">
+              {/* PRINT ONLY: Cover Page */}
+              <div className="hidden print:flex flex-col items-center justify-center h-[90vh] break-after-page bg-white text-center">
+                <div className="relative w-[400px] h-[160px] mb-10">
                   <Image
                     src="/Logo 21 años Xela.png"
                     alt="Viajes Primavera Xela"
@@ -193,20 +194,31 @@ export default function EstadoResultados() {
                     priority
                   />
                 </div>
+                <h1 className="text-5xl font-black text-slate-900 mb-4 tracking-tight">VIAJES PRIMAVERA</h1>
+                <h2 className="text-2xl text-[#0367A6] font-bold tracking-widest uppercase mb-16">
+                  ESTADO DE RESULTADOS · {activeTab === "resumen" ? "RESUMEN" : "DETALLADO"}
+                </h2>
+                <div className="mt-8 border-t-2 border-slate-200 pt-8 min-w-[300px]">
+                  <p className="text-4xl font-bold text-slate-900 mb-3">{periodLabel}</p>
+                  <p className="text-xl font-medium text-slate-500">
+                    {resumen.ventasRegistradas} {resumen.ventasRegistradas === 1 ? 'venta registrada' : 'ventas registradas'}
+                  </p>
+                </div>
               </div>
 
-              <div className="bg-slate-900 text-white p-8 flex flex-col md:flex-row justify-between items-start md:items-end rounded-t-2xl print:rounded-none print:bg-white print:text-slate-800 print:px-0 print:py-6 print:border-b print:border-slate-200">
+              {/* SCREEN ONLY: Header */}
+              <div className="bg-slate-900 text-white p-8 flex flex-col md:flex-row justify-between items-start md:items-end rounded-t-2xl print:hidden">
                 <div>
-                  <h2 className="text-2xl font-bold tracking-tight mb-1 print:text-slate-900">VIAJES PRIMAVERA</h2>
-                  <p className="text-slate-400 font-medium text-sm tracking-widest uppercase print:text-slate-500 print:text-xs">
+                  <h2 className="text-2xl font-bold tracking-tight mb-1">VIAJES PRIMAVERA</h2>
+                  <p className="text-slate-400 font-medium text-sm tracking-widest uppercase">
                     ESTADO DE RESULTADOS · {activeTab === "resumen" ? "RESUMEN" : "DETALLADO"}
                   </p>
                 </div>
                 <div className="text-right mt-4 md:mt-0">
-                  <p className="text-[#F2B138] font-bold text-xl print:text-slate-950">
+                  <p className="text-[#F2B138] font-bold text-xl">
                     {periodLabel}
                   </p>
-                  <p className="text-slate-400 text-sm print:text-slate-500 print:text-xs">
+                  <p className="text-slate-400 text-sm">
                     {resumen.ventasRegistradas} {resumen.ventasRegistradas === 1 ? 'venta registrada' : 'ventas registradas'}
                   </p>
                 </div>
@@ -231,18 +243,10 @@ export default function EstadoResultados() {
                           <span className="font-semibold text-slate-900">{formatCurrency(resumen.gananciaNetaVentas)}</span>
                         </div>
 
-                        <div className="flex justify-between items-start text-slate-600">
-                          <div>
-                            <p className="font-medium text-slate-800">Comisiones ganadas del operador (+)</p>
-                            <p className="text-xs text-slate-400">Comisiones adicionales pagadas por proveedores/operadores</p>
-                          </div>
-                          <span className="font-semibold text-emerald-600">+{formatCurrency(resumen.comisionOperadoresTotal)}</span>
-                        </div>
-
-                        <div className="pt-4 mt-2 border-t border-slate-100 flex justify-between items-center font-bold text-slate-900 text-lg">
+                        <div className="pt-4 mt-2 flex justify-between items-center font-bold text-slate-900 text-lg">
                           <div>
                             <p>Total ingresos de la agencia</p>
-                            <p className="text-xs font-normal text-slate-400">Ganancia de ventas + comisiones del operador</p>
+                            <p className="text-xs font-normal text-slate-400">Ganancia neta sobre los servicios vendidos</p>
                           </div>
                           <span className="text-[#0367A6]">{formatCurrency(resumen.totalIngresosAgencia)}</span>
                         </div>
@@ -283,6 +287,14 @@ export default function EstadoResultados() {
                             ))}
                           </div>
                         )}
+
+                        <div className="flex justify-between items-center text-slate-600 pt-2">
+                          <div>
+                            <p className="font-semibold">Comisiones a trabajadores</p>
+                            <p className="text-xs text-slate-400 font-normal">Pago por comisiones de ventas</p>
+                          </div>
+                          <span className="font-semibold text-red-500">{formatCurrency(resumen.comisionOperadoresTotal)}</span>
+                        </div>
 
                         <div className="pt-3 border-t border-slate-100 flex justify-between items-center font-bold text-slate-800">
                           <span>Total gastos operacionales</span>
@@ -327,7 +339,7 @@ export default function EstadoResultados() {
                                 <th className="py-3 px-2 text-right">MONTO BRUTO</th>
                                 <th className="py-3 px-2 text-right">COSTO NETO</th>
                                 <th className="py-3 px-2 text-right">GANANCIA VENTA</th>
-                                <th className="py-3 px-2 text-right">COMISIÓN (+)</th>
+                                <th className="py-3 px-2 text-right">COMISIÓN (-)</th>
                               </tr>
                             </thead>
                             <tbody className="text-sm divide-y divide-slate-100 print:divide-slate-200">
@@ -346,8 +358,8 @@ export default function EstadoResultados() {
                                   <td className="py-3.5 px-2 text-right font-semibold text-[#0367A6]">
                                     {formatCurrency(venta.gananciaNeta)}
                                   </td>
-                                  <td className="py-3.5 px-2 text-right font-medium text-emerald-600">
-                                    {venta.comisionOperador > 0 ? `+${formatCurrency(venta.comisionOperador)}` : "—"}
+                                  <td className="py-3.5 px-2 text-right font-medium text-red-500">
+                                    {venta.comisionOperador > 0 ? `-${formatCurrency(venta.comisionOperador)}` : "—"}
                                   </td>
                                 </tr>
                               ))}
@@ -358,7 +370,7 @@ export default function EstadoResultados() {
                                 <td className="py-3 px-2 text-right">{formatCurrency(resumen.totalVentasBrutas)}</td>
                                 <td className="py-3 px-2 text-right text-slate-500">{formatCurrency(resumen.costoServiciosNeto)}</td>
                                 <td className="py-3 px-2 text-right text-[#0367A6]">{formatCurrency(resumen.gananciaNetaVentas)}</td>
-                                <td className="py-3 px-2 text-right text-emerald-600">+{formatCurrency(resumen.comisionOperadoresTotal)}</td>
+                                <td className="py-3 px-2 text-right text-red-600">-{formatCurrency(resumen.comisionOperadoresTotal)}</td>
                               </tr>
                             </tfoot>
                           </table>
@@ -464,11 +476,11 @@ export default function EstadoResultados() {
                       </h4>
                       <div className="space-y-3 text-sm">
                         <div className="flex justify-between text-slate-600">
-                          <span>Total Ingresos de la Agencia (Ventas + Comisiones)</span>
+                          <span>Total Ingresos de la Agencia (Ganancia Neta en Ventas)</span>
                           <span className="font-semibold text-slate-900">{formatCurrency(resumen.totalIngresosAgencia)}</span>
                         </div>
                         <div className="flex justify-between text-slate-600">
-                          <span>Total Gastos Operacionales (Fijos + Variables)</span>
+                          <span>Total Gastos Operacionales (Fijos + Variables + Comisiones)</span>
                           <span className="font-semibold text-red-500">-{formatCurrency(resumen.totalGastosOperacionales)}</span>
                         </div>
                         <div className="pt-3 border-t border-slate-200 flex justify-between items-center font-bold text-base">
@@ -519,11 +531,11 @@ export default function EstadoResultados() {
 
                       <div>
                         <div className="flex justify-between text-sm mb-1.5">
-                          <span className="text-slate-600">Comisiones (+)</span>
-                          <span className="font-bold text-emerald-500">{formatCurrency(resumen.comisionOperadoresTotal)}</span>
+                          <span className="text-slate-600">Comisiones (-)</span>
+                          <span className="font-bold text-red-500">{formatCurrency(resumen.comisionOperadoresTotal)}</span>
                         </div>
                         <div className="w-full bg-slate-100 rounded-full h-2">
-                          <div className="bg-emerald-500 h-2 rounded-full transition-all duration-500" style={{ width: `${Math.max(Math.round((resumen.comisionOperadoresTotal / maxVal) * 100), 2)}%` }}></div>
+                          <div className="bg-red-500 h-2 rounded-full transition-all duration-500" style={{ width: `${Math.round((resumen.comisionOperadoresTotal / maxVal) * 100)}%` }}></div>
                         </div>
                       </div>
 

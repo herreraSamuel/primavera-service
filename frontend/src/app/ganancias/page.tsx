@@ -153,23 +153,23 @@ export default function GananciasPage() {
                         <span className="text-sm text-slate-400">Después de costos</span>
                     </div>
 
-                    <div className="bg-white rounded-xl border border-slate-200 border-t-[3px] border-t-amber-500 p-5 flex flex-col gap-1 shadow-sm hover:shadow-md transition-shadow">
+                    <div className="bg-white rounded-xl border border-slate-200 border-t-[3px] border-t-red-500 p-5 flex flex-col gap-1 shadow-sm hover:shadow-md transition-shadow">
                         <div className="flex items-center justify-between mb-1">
                             <span className="text-xs font-semibold tracking-wider text-slate-500 uppercase">
                                 COMISIONES
                             </span>
-                            <span className="p-1.5 rounded-lg bg-amber-50 text-amber-600">
+                            <span className="p-1.5 rounded-lg bg-red-50 text-red-600">
                                 <TrendingUp className="w-5 h-5" />
                             </span>
                         </div>
                         {isLoading ? (
                             <div className="h-9 w-28 bg-slate-200 rounded animate-pulse" />
                         ) : (
-                            <span className="text-3xl font-bold text-slate-900 tracking-tight">
-                                {comisionTotalFormatted}
+                            <span className="text-3xl font-bold text-red-600 tracking-tight">
+                                -{comisionTotalFormatted}
                             </span>
                         )}
-                        <span className="text-sm text-slate-400">Ganancia del operador</span>
+                        <span className="text-sm text-slate-400">Pago a trabajadores</span>
                     </div>
 
                     <div className="bg-white rounded-xl border border-slate-200 border-t-[3px] border-t-slate-400 p-5 flex flex-col gap-1 shadow-sm hover:shadow-md transition-shadow">
