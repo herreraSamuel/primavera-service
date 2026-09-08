@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { formatCurrency } from "../useExpenses";
 import { ExpenseRecord, ExpenseType } from "@/types/expense";
 import { CreateVariableExpensePayload } from "@/services/expense.service";
@@ -9,8 +9,9 @@ interface VariableExpensesViewProps {
     categories: ExpenseType[];
     onCreateVariable: (payload: CreateVariableExpensePayload) => void;
     isCreating: boolean;
-    onDeleteExpense: (id: string | number) => void;
     isDeleting: boolean;
+    selectedMonth: number;
+    selectedYear: number;
 }
 
 function formatDate(dateStr: string): string {
@@ -27,7 +28,9 @@ export function VariableExpensesView({
     onCreateVariable, 
     isCreating,
     onDeleteExpense,
-    isDeleting 
+    isDeleting,
+    selectedMonth,
+    selectedYear
 }: VariableExpensesViewProps) {
     const [searchTerm, setSearchTerm] = useState("");
     const [isFormOpen, setIsFormOpen] = useState(true);
@@ -36,6 +39,20 @@ export function VariableExpensesView({
     const [formCategory, setFormCategory] = useState("");
     const [formDescription, setFormDescription] = useState("");
     const [formAmount, setFormAmount] = useState<string>("");
+
+    useEffect(() => {
+        const now = new Date();
+        if (selectedMonth === now.getMonth() + 1 && selectedYear === now.getFullYear()) {
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, "0");
+            const d = String(now.getDate()).padStart(2, "0");
+            setFormDate(`${y}-${m}-${d}`);
+        } else {
+            const y = selectedYear;
+            const m = String(selectedMonth).padStart(2, "0");
+            setFormDate(`${y}-${m}-01`);
+        }
+    }, [selectedMonth, selectedYear]);
 
     const filteredExpenses = expenses.filter(expense => 
         (expense.descripcion_extra || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
