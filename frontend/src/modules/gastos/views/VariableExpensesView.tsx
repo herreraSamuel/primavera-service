@@ -10,6 +10,7 @@ interface VariableExpensesViewProps {
     onCreateVariable: (payload: CreateVariableExpensePayload) => void;
     isCreating: boolean;
     isDeleting: boolean;
+    onDeleteExpense: (id: string | number) => void;
     selectedMonth: number;
     selectedYear: number;
 }
