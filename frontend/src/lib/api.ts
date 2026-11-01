@@ -31,37 +31,24 @@ api.interceptors.response.use(
     },
     (error) => {
         const responseData = error.response?.data;
+        const status = error.response?.status;
 
-        let customMessage =
-            responseData?.message ||
-            error.message ||
-            "Ocurrió un error inesperado al conectar con el servidor.";
+        let customMessage: string =
+            (typeof responseData?.message === "string" && responseData.message) ||
+            (typeof responseData?.error === "string" && responseData.error) ||
+            "";
 
-        let fieldErrors: ApiFieldError[] | undefined = undefined;
-
-        if (Array.isArray(responseData?.errors)) {
-            fieldErrors = responseData.errors;
-
-            const errorDetails = responseData.errors
-                .map((err: Record<string, unknown> | string) =>
-                    typeof err === "string"
-                        ? err
-                        : typeof err === "object" && err !== null && "field" in err && "message" in err
-                        ? `${err.field}: ${err.message}`
-                        : typeof err === "object" && err !== null && "message" in err
-                        ? String(err.message)
-                        : "Unknown error"
-                )
-                .filter(Boolean);
-
-            if (errorDetails.length > 0) {
-                customMessage = `${responseData.message || "Error de validación"}: ${errorDetails.join(
-                    "; "
-                )}`;
-            }
+        if (!customMessage || customMessage.startsWith("Request failed with status code")) {
+            customMessage = status === 409
+                ? "Ya existe un registro con estos datos en el sistema."
+                : "Ocurrió un error al procesar la solicitud.";
         }
 
-        if (error.response?.status === 401 && typeof window !== "undefined") {
+        const fieldErrors: ApiFieldError[] | undefined = Array.isArray(responseData?.errors)
+            ? responseData.errors
+            : undefined;
+
+        if (status === 401 && typeof window !== "undefined") {
             const isLoginRequest = error.config?.url?.includes("/auth/login");
             if (!isLoginRequest) {
                 localStorage.removeItem("user_data");
@@ -69,6 +56,6 @@ api.interceptors.response.use(
             }
         }
 
-        return Promise.reject(new ApiError(customMessage, fieldErrors, error.response?.status));
+        return Promise.reject(new ApiError(customMessage, fieldErrors, status));
     }
 );

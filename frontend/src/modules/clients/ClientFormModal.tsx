@@ -102,15 +102,22 @@ export function ClientFormModal({ isOpen, onClose, clientToEdit }: ClientFormMod
         };
 
         const handleMutationError = (err: unknown) => {
-            if (err instanceof ApiError && err.errors) {
-                err.errors.forEach((fieldErr) => {
-                    if (fieldErr.field && fieldErr.field in data) {
-                        setError(fieldErr.field as keyof ClientFormValues, {
-                            type: "server",
-                            message: fieldErr.message,
-                        });
-                    }
-                });
+            if (err instanceof ApiError) {
+                if (err.errors && err.errors.length > 0) {
+                    err.errors.forEach((fieldErr) => {
+                        if (fieldErr.field && fieldErr.field in data) {
+                            setError(fieldErr.field as keyof ClientFormValues, {
+                                type: "server",
+                                message: fieldErr.message,
+                            });
+                        }
+                    });
+                } else if (err.status === 409) {
+                    setError("documento_identidad", {
+                        type: "server",
+                        message: "Ya existe un cliente registrado con este documento de identidad.",
+                    });
+                }
             }
         };
 
