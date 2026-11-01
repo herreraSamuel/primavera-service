@@ -9,8 +9,9 @@ interface ApiResponse<T> {
 export const clientsService = {
     getAll: async (page: number = 1, limit: number = 10, search?: string): Promise<PaginatedResponse<Client>> => {
         let url = `/clients?page=${page}&limit=${limit}`;
-        if (search) {
-            url += `&search=${encodeURIComponent(search)}`;
+        const trimmedSearch = search?.trim();
+        if (trimmedSearch) {
+            url += `&search=${encodeURIComponent(trimmedSearch)}`;
         }
         const { data } = await api.get<PaginatedResponse<Client>>(url);
         return data;

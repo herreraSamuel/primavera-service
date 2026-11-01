@@ -3,16 +3,31 @@ import { Prisma } from '@prisma/client';
 
 
 export default class ClientEntity {
-    public static async findAll(skip: number = 0, take: number = 10, search?: string) {
+    private static buildSearchWhere(search?: string): Prisma.clientesWhereInput {
         const where: Prisma.clientesWhereInput = { deleted_at: null };
-        if (search) {
-            where.OR = [
-                { primer_nombre: { contains: search, mode: 'insensitive' } },
-                { segundo_nombre: { contains: search, mode: 'insensitive' } },
-                { primer_apellido: { contains: search, mode: 'insensitive' } },
-                { segundo_apellido: { contains: search, mode: 'insensitive' } }
-            ];
-        }
+        if (!search) return where;
+
+        const terms = search.trim().split(/\s+/).filter(Boolean);
+        if (terms.length === 0) return where;
+
+        where.AND = terms.map((term): Prisma.clientesWhereInput => ({
+            OR: [
+                { primer_nombre: { contains: term, mode: 'insensitive' } },
+                { segundo_nombre: { contains: term, mode: 'insensitive' } },
+                { primer_apellido: { contains: term, mode: 'insensitive' } },
+                { segundo_apellido: { contains: term, mode: 'insensitive' } },
+                { nit: { contains: term, mode: 'insensitive' } },
+                { documento_identidad: { contains: term, mode: 'insensitive' } },
+                { telefono: { contains: term, mode: 'insensitive' } },
+                { correo_electronico: { contains: term, mode: 'insensitive' } }
+            ]
+        }));
+
+        return where;
+    }
+
+    public static async findAll(skip: number = 0, take: number = 10, search?: string) {
+        const where = this.buildSearchWhere(search);
         return await prisma.clientes.findMany({
             skip,
             take,
@@ -24,15 +39,7 @@ export default class ClientEntity {
     }
 
     public static async countAll(search?: string) {
-        const where: Prisma.clientesWhereInput = { deleted_at: null };
-        if (search) {
-            where.OR = [
-                { primer_nombre: { contains: search, mode: 'insensitive' } },
-                { segundo_nombre: { contains: search, mode: 'insensitive' } },
-                { primer_apellido: { contains: search, mode: 'insensitive' } },
-                { segundo_apellido: { contains: search, mode: 'insensitive' } }
-            ];
-        }
+        const where = this.buildSearchWhere(search);
         return await prisma.clientes.count({
             where
         });
