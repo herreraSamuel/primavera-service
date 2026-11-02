@@ -8,11 +8,20 @@ export default class VentaEntity {
         const where: Prisma.ventasWhereInput = { deleted_at: null };
         
         if (search) {
-            where.OR = [
-                { numero_recibo: { contains: search, mode: 'insensitive' } },
-                { clientes: { primer_nombre: { contains: search, mode: 'insensitive' } } },
-                { clientes: { primer_apellido: { contains: search, mode: 'insensitive' } } }
-            ];
+            const terms = search.trim().split(/\s+/).filter(Boolean);
+            if (terms.length > 0) {
+                where.AND = terms.map((term): Prisma.ventasWhereInput => ({
+                    OR: [
+                        { numero_recibo: { contains: term, mode: 'insensitive' } },
+                        { clientes: { primer_nombre: { contains: term, mode: 'insensitive' } } },
+                        { clientes: { segundo_nombre: { contains: term, mode: 'insensitive' } } },
+                        { clientes: { primer_apellido: { contains: term, mode: 'insensitive' } } },
+                        { clientes: { segundo_apellido: { contains: term, mode: 'insensitive' } } },
+                        { clientes: { documento_identidad: { contains: term, mode: 'insensitive' } } },
+                        { clientes: { nit: { contains: term, mode: 'insensitive' } } }
+                    ]
+                }));
+            }
         }
 
         const [data, total] = await Promise.all([
