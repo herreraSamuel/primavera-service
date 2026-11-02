@@ -1,5 +1,9 @@
 import { api } from "@/lib/api";
-import { MonthlyExpenseData } from "../types/expense";
+import { 
+    MonthlyExpenseData, 
+    CreateFixedCatalogPayload, 
+    UpdateFixedCatalogPayload 
+} from "../types/expense";
 
 interface ApiResponse<T> {
     message: string;
@@ -46,6 +50,18 @@ export const expenseService = {
             monto,
             fecha
         });
+    },
+
+    createFixedCatalog: async (payload: CreateFixedCatalogPayload): Promise<void> => {
+        await api.post(`/gastos/catalogo`, payload);
+    },
+
+    updateFixedCatalog: async (id: number, payload: UpdateFixedCatalogPayload): Promise<void> => {
+        await api.patch(`/gastos/catalogo/${id}`, payload);
+    },
+
+    deleteFixedCatalog: async (id: number): Promise<void> => {
+        await api.delete(`/gastos/catalogo/${id}`);
     },
 
     createVariableExpense: async (payload: CreateVariableExpensePayload): Promise<void> => {

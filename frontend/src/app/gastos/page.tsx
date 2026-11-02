@@ -29,6 +29,12 @@ export default function ExpensesPage() {
         YEARS,
         confirmExpense,
         isConfirming,
+        createFixedCatalog,
+        isCreatingFixedCatalog,
+        updateFixedCatalog,
+        isUpdatingFixedCatalog,
+        deleteFixedCatalog,
+        isDeletingFixedCatalog,
         createVariableExpense,
         isCreatingVariable,
         updateExpense,
@@ -99,11 +105,18 @@ export default function ExpensesPage() {
                     {activeTab === 'FIJOS' && (
                         <FixedExpensesView 
                             expenses={data?.fixedExpenses || []} 
+                            categories={data?.fixedCategories && data.fixedCategories.length > 0 ? data.fixedCategories : (data?.categories || [])}
                             onConfirm={(id, monto) => confirmExpense({ catalogo_gasto_id: id, monto })}
                             isConfirming={isConfirming}
                             onUpdateAmount={(recordId, monto) => updateExpense({ id: recordId, monto })}
                             isUpdating={isUpdating}
                             monthName={filterMode === 'mes' ? MONTHS[month - 1] : periodLabel}
+                            onCreateFixedCatalog={createFixedCatalog}
+                            isCreatingFixedCatalog={isCreatingFixedCatalog}
+                            onUpdateFixedCatalog={(id, payload) => updateFixedCatalog({ id, payload })}
+                            isUpdatingFixedCatalog={isUpdatingFixedCatalog}
+                            onDeleteFixedCatalog={deleteFixedCatalog}
+                            isDeletingFixedCatalog={isDeletingFixedCatalog}
                         />
                     )}
 
