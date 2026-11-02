@@ -58,3 +58,51 @@ export const updateGastoSchema = z.object({
         .optional()
         .nullable()
 }).strict();
+
+export const createCatalogoGastoSchema = z.object({
+    nombre: z
+        .string({ message: 'El nombre es obligatorio' })
+        .trim()
+        .min(1, { message: 'El nombre no puede estar vacío' })
+        .max(150, { message: 'El nombre debe tener máximo 150 caracteres' }),
+
+    monto_base: z
+        .number({ message: 'El monto base debe ser un número' })
+        .positive({ message: 'El monto base debe ser mayor a cero' }),
+
+    categoria: z
+        .string({ message: 'La categoría es obligatoria' })
+        .trim()
+        .min(1, { message: 'La categoría no puede estar vacía' })
+        .max(100, { message: 'La categoría debe tener máximo 100 caracteres' }),
+
+    frecuencia: z
+        .enum(['SEMANAL', 'QUINCENAL', 'MENSUAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL'])
+        .optional()
+        .default('MENSUAL')
+}).strict();
+
+export const updateCatalogoGastoSchema = z.object({
+    nombre: z
+        .string({ message: 'El nombre debe ser texto' })
+        .trim()
+        .min(1, { message: 'El nombre no puede estar vacío' })
+        .max(150, { message: 'El nombre debe tener máximo 150 caracteres' })
+        .optional(),
+
+    monto_base: z
+        .number({ message: 'El monto base debe ser un número' })
+        .positive({ message: 'El monto base debe ser mayor a cero' })
+        .optional(),
+
+    categoria: z
+        .string({ message: 'La categoría debe ser texto' })
+        .trim()
+        .min(1, { message: 'La categoría no puede estar vacía' })
+        .max(100, { message: 'La categoría debe tener máximo 100 caracteres' })
+        .optional(),
+
+    frecuencia: z
+        .enum(['SEMANAL', 'QUINCENAL', 'MENSUAL', 'TRIMESTRAL', 'SEMESTRAL', 'ANUAL'])
+        .optional()
+}).strict();

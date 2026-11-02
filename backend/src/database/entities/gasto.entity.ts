@@ -133,6 +133,93 @@ export default class GastoEntity {
         });
     }
 
+    public static async createCatalogoFijo(data: {
+        nombre: string;
+        monto_base: number;
+        categoria: string;
+        frecuencia?: 'SEMANAL' | 'QUINCENAL' | 'MENSUAL' | 'TRIMESTRAL' | 'SEMESTRAL' | 'ANUAL';
+    }) {
+        return await prisma.$transaction(async (tx) => {
+            let tipoGasto = await tx.tipos_gasto.findFirst({
+                where: {
+                    nombre: { equals: data.categoria.trim(), mode: 'insensitive' },
+                    deleted_at: null
+                }
+            });
+
+            if (!tipoGasto) {
+                tipoGasto = await tx.tipos_gasto.create({
+                    data: {
+                        nombre: data.categoria.trim(),
+                        categoria_gasto: 'FIJO'
+                    }
+                });
+            }
+
+            return await tx.catalogo_gastos.create({
+                data: {
+                    nombre: data.nombre.trim(),
+                    monto_base: data.monto_base,
+                    frecuencia: data.frecuencia || 'MENSUAL',
+                    tipo_gasto_id: tipoGasto.id
+                },
+                include: {
+                    tipos_gasto: true
+                }
+            });
+        });
+    }
+
+    public static async updateCatalogoFijo(id: number, data: {
+        nombre?: string;
+        monto_base?: number;
+        categoria?: string;
+        frecuencia?: 'SEMANAL' | 'QUINCENAL' | 'MENSUAL' | 'TRIMESTRAL' | 'SEMESTRAL' | 'ANUAL';
+    }) {
+        return await prisma.$transaction(async (tx) => {
+            const updateData: Prisma.catalogo_gastosUpdateInput = {};
+            if (data.nombre !== undefined) updateData.nombre = data.nombre.trim();
+            if (data.monto_base !== undefined) updateData.monto_base = data.monto_base;
+            if (data.frecuencia !== undefined) updateData.frecuencia = data.frecuencia;
+
+            if (data.categoria) {
+                let tipoGasto = await tx.tipos_gasto.findFirst({
+                    where: {
+                        nombre: { equals: data.categoria.trim(), mode: 'insensitive' },
+                        deleted_at: null
+                    }
+                });
+
+                if (!tipoGasto) {
+                    tipoGasto = await tx.tipos_gasto.create({
+                        data: {
+                            nombre: data.categoria.trim(),
+                            categoria_gasto: 'FIJO'
+                        }
+                    });
+                }
+                updateData.tipos_gasto = {
+                    connect: { id: tipoGasto.id }
+                };
+            }
+
+            return await tx.catalogo_gastos.update({
+                where: { id },
+                data: updateData,
+                include: {
+                    tipos_gasto: true
+                }
+            });
+        });
+    }
+
+    public static async deleteCatalogoFijo(id: number) {
+        return await prisma.catalogo_gastos.update({
+            where: { id },
+            data: { deleted_at: new Date() }
+        });
+    }
+
     public static async getSummary(startDateInput: string | Date, endDateInput: string | Date) {
         const startDate = new Date(startDateInput);
         const endDate = new Date(endDateInput);
@@ -155,6 +242,9 @@ export default class GastoEntity {
                         }
                     }
                 }
+            },
+            orderBy: {
+                id: 'asc'
             }
         });
 
@@ -209,6 +299,16 @@ export default class GastoEntity {
             }
         });
 
+        const fixedCategories = await prisma.tipos_gasto.findMany({
+            where: {
+                deleted_at: null,
+                categoria_gasto: 'FIJO'
+            },
+            orderBy: {
+                nombre: 'asc'
+            }
+        });
+
         return {
             summary: {
                 fixedConfirmed: fixedConfirmedTotal,
@@ -218,7 +318,8 @@ export default class GastoEntity {
             },
             fixedExpenses: fixedCatalog,
             variableExpenses: variableRecords,
-            categories
+            categories,
+            fixedCategories
         };
     }
 

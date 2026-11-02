@@ -38,4 +38,19 @@ export interface MonthlyExpenseData {
     fixedExpenses: FixedExpenseWithRecords[];
     variableExpenses: ExpenseRecord[];
     categories: ExpenseType[];
+    fixedCategories?: ExpenseType[];
+}
+
+export interface CreateFixedCatalogPayload {
+    nombre: string;
+    monto_base: number;
+    categoria: string;
+    frecuencia?: 'SEMANAL' | 'QUINCENAL' | 'MENSUAL' | 'TRIMESTRAL' | 'SEMESTRAL' | 'ANUAL';
+}
+
+export interface UpdateFixedCatalogPayload {
+    nombre?: string;
+    monto_base?: number;
+    categoria?: string;
+    frecuencia?: 'SEMANAL' | 'QUINCENAL' | 'MENSUAL' | 'TRIMESTRAL' | 'SEMESTRAL' | 'ANUAL';
 }

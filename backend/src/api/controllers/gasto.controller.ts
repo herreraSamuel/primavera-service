@@ -94,6 +94,60 @@ export default class GastoController {
         }
     }
 
+    public static async createCatalogo(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const data = req.body;
+            const newCatalogItem = await GastoEntity.createCatalogoFijo(data);
+
+            res.status(201).json({
+                message: 'Fixed expense catalog item created successfully',
+                data: newCatalogItem
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    public static async updateCatalogo(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { id } = req.params;
+            const catalogId = parseInt(id as string);
+
+            if (isNaN(catalogId)) {
+                throw new BadRequest('Invalid catalog ID');
+            }
+
+            const data = req.body;
+            const updated = await GastoEntity.updateCatalogoFijo(catalogId, data);
+
+            res.status(200).json({
+                message: 'Fixed expense catalog item updated successfully',
+                data: updated
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    public static async deleteCatalogo(req: Request, res: Response, next: NextFunction): Promise<void> {
+        try {
+            const { id } = req.params;
+            const catalogId = parseInt(id as string);
+
+            if (isNaN(catalogId)) {
+                throw new BadRequest('Invalid catalog ID');
+            }
+
+            await GastoEntity.deleteCatalogoFijo(catalogId);
+
+            res.status(200).json({
+                message: 'Fixed expense catalog item deleted successfully'
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
     public static async getMonthlySummary(req: Request, res: Response, next: NextFunction): Promise<void> {
         try {
             let { startDate, endDate, month, year, mes, anio } = req.query as {

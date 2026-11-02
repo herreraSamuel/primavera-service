@@ -1,6 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
-import { expenseService, CreateVariableExpensePayload } from "@/services/expense.service";
+import { 
+    expenseService, 
+    CreateVariableExpensePayload 
+} from "@/services/expense.service";
+import { 
+    CreateFixedCatalogPayload, 
+    UpdateFixedCatalogPayload 
+} from "@/types/expense";
 
 export function formatCurrency(value: number): string {
     return "Q" + value.toLocaleString("en-US", { minimumFractionDigits: 0, maximumFractionDigits: 0 });
@@ -71,6 +78,30 @@ export const useExpenses = () => {
         }
     });
 
+    const createFixedCatalogMutation = useMutation({
+        mutationFn: (payload: CreateFixedCatalogPayload) =>
+            expenseService.createFixedCatalog(payload),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["expenses", "summary"] });
+        }
+    });
+
+    const updateFixedCatalogMutation = useMutation({
+        mutationFn: ({ id, payload }: { id: number; payload: UpdateFixedCatalogPayload }) =>
+            expenseService.updateFixedCatalog(id, payload),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["expenses", "summary"] });
+        }
+    });
+
+    const deleteFixedCatalogMutation = useMutation({
+        mutationFn: (id: number) =>
+            expenseService.deleteFixedCatalog(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["expenses", "summary"] });
+        }
+    });
+
     const createVariableMutation = useMutation({
         mutationFn: (payload: CreateVariableExpensePayload) => 
             expenseService.createVariableExpense(payload),
@@ -120,6 +151,12 @@ export const useExpenses = () => {
         periodLabel,
         confirmExpense: confirmExpenseMutation.mutate,
         isConfirming: confirmExpenseMutation.isPending,
+        createFixedCatalog: createFixedCatalogMutation.mutateAsync,
+        isCreatingFixedCatalog: createFixedCatalogMutation.isPending,
+        updateFixedCatalog: updateFixedCatalogMutation.mutateAsync,
+        isUpdatingFixedCatalog: updateFixedCatalogMutation.isPending,
+        deleteFixedCatalog: deleteFixedCatalogMutation.mutateAsync,
+        isDeletingFixedCatalog: deleteFixedCatalogMutation.isPending,
         createVariableExpense: createVariableMutation.mutate,
         isCreatingVariable: createVariableMutation.isPending,
         updateExpense: updateExpenseMutation.mutate,
